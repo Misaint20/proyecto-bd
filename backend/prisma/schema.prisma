@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Barrica {
+  id_barrica         String               @id @db.VarChar(36)
+  tipo_madera        Barrica_tipo_madera
+  capacidad_litros   Int
+  fecha_compra       DateTime             @db.Date
+  costo              Decimal              @db.Decimal(10, 2)
+  Lote               Lote[]
+  Proceso_Produccion Proceso_Produccion[]
+}
+
+model Control_Calidad {
+  id_control         String                       @id @db.VarChar(36)
+  id_proceso         String                       @db.VarChar(36)
+  fecha_analisis     DateTime                     @db.Date
+  tipo_control       Control_Calidad_tipo_control
+  resultados         String?                      @db.Text
+  Proceso_Produccion Proceso_Produccion           @relation(fields: [id_proceso], references: [id_proceso], onDelete: NoAction, onUpdate: NoAction, map: "Control_Calidad_ibfk_1")
+
+  @@index([id_proceso], map: "id_proceso")
+}
+
+model Cosecha {
+  id_cosecha    String   @id @db.VarChar(36)
+  id_vinedo     String   @db.VarChar(36)
+  anio          Int
+  cantidad_kg   Decimal  @db.Decimal(10, 2)
+  fecha_cosecha DateTime @db.Date
+  Vinedo        Vinedo   @relation(fields: [id_vinedo], references: [id_vinedo], onDelete: NoAction, onUpdate: NoAction, map: "Cosecha_ibfk_1")
+  Lote          Lote[]
+
+  @@index([id_vinedo], map: "id_vinedo")
+}
+
+model Detalle_Venta {
+  id_detalle      String  @id @db.VarChar(36)
+  id_venta        String  @db.VarChar(36)
+  id_vino         String  @db.VarChar(36)
+  cantidad        Int
+  precio_unitario Decimal @db.Decimal(10, 2)
+  Venta           Venta   @relation(fields: [id_venta], references: [id_venta], onDelete: Cascade, onUpdate: NoAction, map: "Detalle_Venta_ibfk_1")
+  Vino            Vino    @relation(fields: [id_vino], references: [id_vino], onDelete: NoAction, onUpdate: NoAction, map: "Detalle_Venta_ibfk_2")
+
+  @@index([id_venta], map: "id_venta")
+  @@index([id_vino], map: "id_vino")
+}
+
+model Inventario {
+  id_inventario     String               @id @db.VarChar(36)
+  id_lote           String               @db.VarChar(36)
+  ubicacion         Inventario_ubicacion
+  cantidad_botellas Int
+  Lote              Lote                 @relation(fields: [id_lote], references: [id_lote], onDelete: NoAction, onUpdate: NoAction, map: "Inventario_ibfk_1")
+
+  @@index([id_lote], map: "id_lote")
+}
+
+model Lote {
+  id_lote            String               @id @db.VarChar(36)
+  id_vino            String               @db.VarChar(36)
+  id_barrica         String?              @db.VarChar(36)
+  id_cosecha         String               @db.VarChar(36)
+  fecha_embotellado  DateTime             @db.Date
+  cantidad_botellas  Int
+  numero_lote        String               @unique(map: "numero_lote") @db.VarChar(50)
+  Inventario         Inventario[]
+  Vino               Vino                 @relation(fields: [id_vino], references: [id_vino], onDelete: Cascade, onUpdate: NoAction, map: "Lote_ibfk_1")
+  Barrica            Barrica?             @relation(fields: [id_barrica], references: [id_barrica], onDelete: NoAction, onUpdate: NoAction, map: "Lote_ibfk_2")
+  Cosecha            Cosecha              @relation(fields: [id_cosecha], references: [id_cosecha], onDelete: NoAction, onUpdate: NoAction, map: "Lote_ibfk_3")
+  Proceso_Produccion Proceso_Produccion[]
+
+  @@index([id_barrica], map: "id_barrica")
+  @@index([id_cosecha], map: "id_cosecha")
+  @@index([id_vino], map: "id_vino")
+}
+
+model Mezcla_Vino {
+  id_mezcla   String   @id @db.VarChar(36)
+  id_vino     String   @db.VarChar(36)
+  id_varietal String   @db.VarChar(36)
+  porcentaje  Decimal  @db.Decimal(5, 2)
+  Vino        Vino     @relation(fields: [id_vino], references: [id_vino], onDelete: Cascade, onUpdate: NoAction, map: "Mezcla_Vino_ibfk_1")
+  Varietal    Varietal @relation(fields: [id_varietal], references: [id_varietal], onDelete: NoAction, onUpdate: NoAction, map: "Mezcla_Vino_ibfk_2")
+
+  @@unique([id_vino, id_varietal], map: "idx_unique_mezcla")
+  @@index([id_varietal], map: "id_varietal")
+}
+
+model Proceso_Produccion {
+  id_proceso      String            @id @db.VarChar(36)
+  id_lote         String            @db.VarChar(36)
+  nombre_proceso  String            @db.VarChar(100)
+  fecha_inicio    DateTime          @db.Date
+  fecha_fin       DateTime?         @db.Date
+  descripcion     String?           @db.Text
+  id_barrica      String?           @db.VarChar(36)
+  Control_Calidad Control_Calidad[]
+  Lote            Lote              @relation(fields: [id_lote], references: [id_lote], onDelete: NoAction, onUpdate: NoAction, map: "Proceso_Produccion_ibfk_1")
+  Barrica         Barrica?          @relation(fields: [id_barrica], references: [id_barrica], onDelete: NoAction, onUpdate: NoAction, map: "Proceso_Produccion_ibfk_2")
+
+  @@index([id_barrica], map: "id_barrica")
+  @@index([id_lote], map: "id_lote")
+}
+
+model Varietal {
+  id_varietal String        @id @db.VarChar(36)
+  nombre      String        @unique(map: "nombre") @db.VarChar(50)
+  descripcion String?       @db.Text
+  Mezcla_Vino Mezcla_Vino[]
+}
+
+model Venta {
+  id_venta      String          @id @db.VarChar(36)
+  fecha_venta   DateTime        @db.Date
+  cliente       String          @db.VarChar(200)
+  Detalle_Venta Detalle_Venta[]
+}
+
+model Vinedo {
+  id_vinedo String    @id @db.VarChar(36)
+  nombre    String    @db.VarChar(100)
+  ubicacion String    @db.VarChar(200)
+  contacto  String    @db.VarChar(100)
+  telefono  String?   @db.VarChar(20)
+  Cosecha   Cosecha[]
+}
+
+model Vino {
+  id_vino           String          @id @db.VarChar(36)
+  nombre            String          @db.VarChar(100)
+  tipo              Vino_tipo
+  anio_cosecha      Int
+  precio_botella    Decimal         @db.Decimal(10, 2)
+  botellas_por_caja Int?            @default(12)
+  meses_barrica     Int?            @default(0)
+  descripcion       String?         @db.Text
+  Detalle_Venta     Detalle_Venta[]
+  Lote              Lote[]
+  Mezcla_Vino       Mezcla_Vino[]
+}
+
+enum Barrica_tipo_madera {
+  Franc__s  @map("Franc??s")
+  Americano
+  Mixto
+}
+
+enum Inventario_ubicacion {
+  Barricas
+  Oficina
+  Almacenamiento
+  Producci__n    @map("Producci??n")
+}
+
+enum Vino_tipo {
+  Tinto
+  Blanco
+  Rosado
+  Espumoso
+}
+
+enum Control_Calidad_tipo_control {
+  An__lisis @map("An??lisis")
+  Cata
+}
