@@ -7,7 +7,7 @@ const router = Router();
 router.get('/', VinoController.getVinos);
 router.get('/:id', VinoController.getVinoById);
 router.post('/', VinoController.createVino);
+router.patch('/:id', VinoController.updateVino);
 router.delete('/:id', VinoController.deleteVino);
-// router.put('/:id', VinoController.updateVino); // Faltaría implementar el update
 
 export default router;

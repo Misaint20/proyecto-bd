@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import * as VinoService from '../services/VinoService';
-import { TipoVino } from '@prisma/client';
-import { CreateVinoData } from '../types/vino';
+import { Vino_tipo as TipoVino } from '@prisma/client';
+import { CreateVinoData, UpdateVinoData } from '../types/vino';
+import { HttpError } from '../middlewares/ErrorHandler';
 
 // Obtener lista de Vinos
 export const getVinos = async (req: Request, res: Response, next: NextFunction) => {
@@ -10,7 +11,7 @@ export const getVinos = async (req: Request, res: Response, next: NextFunction) 
         return res.status(200).json({ data: vinos });
     } catch (error) {
         // Pasa el error al middleware de Express
-        next(error); 
+        next(error);
     }
 };
 
@@ -38,7 +39,7 @@ export const getVinoById = async (req: Request, res: Response, next: NextFunctio
 // Crear un nuevo Vino
 export const createVino = async (req: Request, res: Response, next: NextFunction) => {
     const data: CreateVinoData = req.body;
-    
+
     // Validación de ENUM (TipoVino)
     const tiposValidos = Object.values(TipoVino);
     if (!tiposValidos.includes(data.tipo)) {
@@ -49,6 +50,34 @@ export const createVino = async (req: Request, res: Response, next: NextFunction
         const nuevoVino = await VinoService.createVino(data);
         return res.status(201).json({ message: 'Vino creado exitosamente.', data: nuevoVino });
     } catch (error) {
+        next(error);
+    }
+};
+
+// Actualizar un Vino existente
+export const updateVino = async (req: Request, res: Response, next: NextFunction) => {
+    const id: string = req.params.id;
+    const data: UpdateVinoData = req.body;
+
+    if (!id || typeof id !== 'string') {
+        return res.status(400).json({ message: 'ID de vino inválido.' });
+    }
+
+    // Validación opcional de ENUM si está presente en el cuerpo
+    if (data.tipo) {
+        const tiposValidos = Object.values(TipoVino);
+        if (!tiposValidos.includes(data.tipo as TipoVino)) {
+            return res.status(400).json({ message: `Tipo de vino inválido: ${data.tipo}.` });
+        }
+    }
+
+    try {
+        const vinoActualizado = await VinoService.updateVino(id, data);
+        return res.status(200).json({ message: 'Vino actualizado exitosamente.', data: vinoActualizado });
+    } catch (error) {
+        if (error instanceof Error && error.message.includes('no encontrado')) {
+            return next(new HttpError(error.message, 404));
+        }
         next(error);
     }
 };

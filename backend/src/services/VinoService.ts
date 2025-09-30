@@ -1,5 +1,7 @@
 import prisma from '../lib/PrismaService';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { CreateVinoData, UpdateVinoData } from '../types/vino';
+import { generateUuid } from '../lib/IdGenerator'; 
 
 // RF01: Obtener todos los vinos, incluyendo la mezcla si aplica
 export const findAllVinos = async () => {
@@ -19,6 +21,8 @@ export const findVinoById = async (id: string) => {
 
 // RF01: Crear un nuevo registro de vino
 export const createVino = async (data: CreateVinoData) => {
+    const newId = generateUuid();
+    data.id_vino = newId;
     return prisma.vino.create({ data });
 };
 
@@ -39,7 +43,7 @@ export const updateVino = async (id: string, data: UpdateVinoData)=> {
             where: { id_vino: id },
             data: data,
         });
-    } catch (error) {
+    } catch (error: any) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
             // Error si el registro no existe
             throw new Error('Vino no encontrado para actualizar.');

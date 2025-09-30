@@ -18,3 +18,9 @@
 ## Prisma
 
 [Prisma](https://www.prisma.io/) is an open-source database access tool that connects to your database and generates CRUD APIs for your application.
+
+## Morgan and Winston
+
+[Morgan](https://www.npmjs.com/package/morgan) is a HTTP request logger middleware for Node.js applications.
+
+[Winston](https://www.npmjs.com/package/winston) is a multi-transport async logging library for Node.js.

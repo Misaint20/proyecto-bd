@@ -1,13 +1,7 @@
-import { TipoVino } from "@prisma/client";
+import { Prisma } from '@prisma/client';
 
-export interface CreateVinoData {
-    nombre: string;
-    tipo: TipoVino;
-    año_cosecha: number;
-    precio_botella: number;
-    botellas_por_caja?: number;
-    meses_barrica?: number;
-    descripcion?: string;
-}
+type VinoCreateInput = Prisma.VinoCreateInput;
+
+export interface CreateVinoData extends VinoCreateInput {}
 
 export interface UpdateVinoData extends Partial<CreateVinoData> {}

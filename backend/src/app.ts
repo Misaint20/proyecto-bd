@@ -2,12 +2,13 @@ import express from "express";
 import morgan from "morgan";
 import { errorHandler } from "./middlewares/ErrorHandler";
 import vinoRoutes from "./routes/VinoRoutes";
+import { requestLogger } from "./middlewares/RequestLogger";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
+app.use(requestLogger());
 
 app.use('/api/vinos', vinoRoutes)
 
