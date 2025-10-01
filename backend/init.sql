@@ -1,6 +1,25 @@
 CREATE DATABASE IF NOT EXISTS Bodega CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE Bodega;
 
+CREATE TABLE IF NOT EXISTS Rol (
+    id_rol VARCHAR(36) PRIMARY KEY,
+    nombre ENUM('Administrador', 'Encargado de Bodega', 'Enólogo/Productor', 'Vendedor') NOT NULL UNIQUE,
+    descripcion TEXT
+);
+
+CREATE TABLE IF NOT EXISTS Usuario (
+    id_usuario VARCHAR(36) PRIMARY KEY,
+    id_rol VARCHAR(36) NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL, 
+    activo BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_rol) REFERENCES Rol(id_rol)
+);
+
 CREATE TABLE IF NOT EXISTS Vinedo (
     id_vinedo VARCHAR(36) PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -110,3 +129,15 @@ CREATE TABLE IF NOT EXISTS Control_Calidad (
     resultados TEXT,
     FOREIGN KEY (id_proceso) REFERENCES Proceso_Produccion(id_proceso)
 );
+
+SET @ADMIN_ID = UUID();
+SET @BODEGA_ID = UUID();
+SET @ENOLOGO_ID = UUID();
+SET @VENDEDOR_ID = UUID();
+
+-- Inserción de roles base
+INSERT IGNORE INTO Rol (id_rol, nombre, descripcion) VALUES
+(@ADMIN_ID, 'Administrador', 'Acceso total y gestión de usuarios.'),
+(@BODEGA_ID, 'Encargado de Bodega', 'Control de inventario y recepción de mercancía (RF01).'),
+(@ENOLOGO_ID, 'Enólogo/Productor', 'Supervisión del proceso productivo y calidad (RF02).'),
+(@VENDEDOR_ID, 'Vendedor', 'Atención a clientes y registro de ventas (RF03).');

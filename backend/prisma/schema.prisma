@@ -110,6 +110,28 @@ model Proceso_Produccion {
   @@index([id_lote], map: "id_lote")
 }
 
+model Rol {
+  id_rol      String     @id @db.VarChar(36)
+  nombre      Rol_nombre @unique(map: "nombre")
+  descripcion String?    @db.Text
+  Usuario     Usuario[]
+}
+
+model Usuario {
+  id_usuario          String    @id @db.VarChar(36)
+  id_rol              String    @db.VarChar(36)
+  nombre              String    @db.VarChar(100)
+  username            String    @unique(map: "username") @db.VarChar(50)
+  email               String    @unique(map: "email") @db.VarChar(100)
+  password            String    @db.VarChar(100)
+  activo              Boolean?  @default(true)
+  fecha_creacion      DateTime? @default(now()) @db.Timestamp(0)
+  fecha_actualizacion DateTime? @default(now()) @db.Timestamp(0)
+  Rol                 Rol       @relation(fields: [id_rol], references: [id_rol], onDelete: NoAction, onUpdate: NoAction, map: "Usuario_ibfk_1")
+
+  @@index([id_rol], map: "id_rol")
+}
+
 model Varietal {
   id_varietal String        @id @db.VarChar(36)
   nombre      String        @unique(map: "nombre") @db.VarChar(50)
@@ -134,7 +156,7 @@ model Vinedo {
 }
 
 model Vino {
-  id_vino           String          @id @default(uuid()) @db.VarChar(36)
+  id_vino           String          @id @db.VarChar(36)
   nombre            String          @db.VarChar(100)
   tipo              Vino_tipo
   anio_cosecha      Int
@@ -151,6 +173,13 @@ enum Barrica_tipo_madera {
   Franc__s  @map("Franc??s")
   Americano
   Mixto
+}
+
+enum Rol_nombre {
+  Administrador
+  Encargado_de_Bodega @map("Encargado de Bodega")
+  En__logo_Productor  @map("En??logo/Productor")
+  Vendedor
 }
 
 enum Inventario_ubicacion {
