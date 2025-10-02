@@ -1,9 +1,9 @@
-CREATE DATABASE IF NOT EXISTS Bodega CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS Bodega;
 USE Bodega;
 
 CREATE TABLE IF NOT EXISTS Rol (
     id_rol VARCHAR(36) PRIMARY KEY,
-    nombre ENUM('Administrador', 'Encargado de Bodega', 'Enólogo/Productor', 'Vendedor') NOT NULL UNIQUE,
+    nombre ENUM('Administrador', 'Encargado de Bodega', 'Enologo/Productor', 'Vendedor') NOT NULL UNIQUE,
     descripcion TEXT
 );
 
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS Varietal (
 
 CREATE TABLE IF NOT EXISTS Barrica (
     id_barrica VARCHAR(36) PRIMARY KEY,
-    tipo_madera ENUM('Francés', 'Americano', 'Mixto') NOT NULL,
+    tipo_madera ENUM('Frances', 'Americano', 'Mixto') NOT NULL,
     capacidad_litros INT NOT NULL,
     fecha_compra DATE NOT NULL,
     costo DECIMAL(10, 2) NOT NULL
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS Lote (
 CREATE TABLE IF NOT EXISTS Inventario (
     id_inventario VARCHAR(36) PRIMARY KEY,
     id_lote VARCHAR(36) NOT NULL,
-    ubicacion ENUM('Barricas', 'Oficina', 'Almacenamiento', 'Producción') NOT NULL,
+    ubicacion ENUM('Barricas', 'Oficina', 'Almacenamiento', 'Produccion') NOT NULL,
     cantidad_botellas INT NOT NULL,
     FOREIGN KEY (id_lote) REFERENCES Lote(id_lote)
 );
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS Control_Calidad (
     id_control VARCHAR(36) PRIMARY KEY,
     id_proceso VARCHAR(36) NOT NULL,
     fecha_analisis DATE NOT NULL,
-    tipo_control ENUM('Análisis', 'Cata') NOT NULL,
+    tipo_control ENUM('Analisis', 'Cata') NOT NULL,
     resultados TEXT,
     FOREIGN KEY (id_proceso) REFERENCES Proceso_Produccion(id_proceso)
 );
@@ -138,6 +138,6 @@ SET @VENDEDOR_ID = UUID();
 -- Inserción de roles base
 INSERT IGNORE INTO Rol (id_rol, nombre, descripcion) VALUES
 (@ADMIN_ID, 'Administrador', 'Acceso total y gestión de usuarios.'),
-(@BODEGA_ID, 'Encargado de Bodega', 'Control de inventario y recepción de mercancía (RF01).'),
-(@ENOLOGO_ID, 'Enólogo/Productor', 'Supervisión del proceso productivo y calidad (RF02).'),
-(@VENDEDOR_ID, 'Vendedor', 'Atención a clientes y registro de ventas (RF03).');
+(@BODEGA_ID, 'Encargado de Bodega', 'Control de inventario y recepción de mercancia (RF01).'),
+(@ENOLOGO_ID, 'Enologo/Productor', 'Supervision del proceso productivo y calidad (RF02).'),
+(@VENDEDOR_ID, 'Vendedor', 'Atencion a clientes y registro de ventas (RF03).');

@@ -170,7 +170,7 @@ model Vino {
 }
 
 enum Barrica_tipo_madera {
-  Franc__s  @map("Franc??s")
+  Frances
   Americano
   Mixto
 }
@@ -178,7 +178,7 @@ enum Barrica_tipo_madera {
 enum Rol_nombre {
   Administrador
   Encargado_de_Bodega @map("Encargado de Bodega")
-  En__logo_Productor  @map("En??logo/Productor")
+  Enologo_Productor   @map("Enologo/Productor")
   Vendedor
 }
 
@@ -186,7 +186,7 @@ enum Inventario_ubicacion {
   Barricas
   Oficina
   Almacenamiento
-  Producci__n    @map("Producci??n")
+  Produccion
 }
 
 enum Vino_tipo {
@@ -197,6 +197,6 @@ enum Vino_tipo {
 }
 
 enum Control_Calidad_tipo_control {
-  An__lisis @map("An??lisis")
+  Analisis
   Cata
 }
