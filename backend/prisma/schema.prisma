@@ -169,12 +169,6 @@ model Vino {
   Mezcla_Vino       Mezcla_Vino[]
 }
 
-enum Barrica_tipo_madera {
-  Frances
-  Americano
-  Mixto
-}
-
 enum Rol_nombre {
   Administrador
   Encargado_de_Bodega @map("Encargado de Bodega")
@@ -182,11 +176,10 @@ enum Rol_nombre {
   Vendedor
 }
 
-enum Inventario_ubicacion {
-  Barricas
-  Oficina
-  Almacenamiento
-  Produccion
+enum Barrica_tipo_madera {
+  Frances
+  Americano
+  Mixto
 }
 
 enum Vino_tipo {
@@ -194,6 +187,13 @@ enum Vino_tipo {
   Blanco
   Rosado
   Espumoso
+}
+
+enum Inventario_ubicacion {
+  Barricas
+  Oficina
+  Almacenamiento
+  Produccion
 }
 
 enum Control_Calidad_tipo_control {

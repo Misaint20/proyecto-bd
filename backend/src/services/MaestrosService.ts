@@ -30,7 +30,7 @@ export const createVinedo = async (data: CreateVinedoData): Promise<Vinedo> => {
     }
 };
 
-export const findAllVinedos = async (): Promise<Vinedo> => {
+export const findAllVinedos = async (): Promise<Vinedo[]> => {
     return prisma.vinedo.findMany();
 };
 
@@ -83,7 +83,7 @@ export const createVarietal = async (data: CreateVarietalData): Promise<Varietal
     }
 };
 
-export const findAllVarietales = async (): Promise<Varietal> => {
+export const findAllVarietales = async (): Promise<Varietal[]> => {
     return prisma.varietal.findMany();
 };
 
@@ -141,7 +141,7 @@ export const createBarrica = async (data: BarricaCreationData): Promise<Barrica>
     }
 };
 
-export const findAllBarricas = async (): Promise<Barrica> => {
+export const findAllBarricas = async (): Promise<Barrica[]> => {
     return prisma.barrica.findMany();
 };
 
@@ -188,7 +188,7 @@ export const createMezclaVino = async (data: CreateMezclaVinoData): Promise<Mezc
     }
 };
 
-export const findAllMezclasVino = async (): Promise<Mezcla_Vino> => {
+export const findAllMezclasVino = async (): Promise<Mezcla_Vino[]> => {
     return prisma.mezcla_Vino.findMany({
         include: { Vino: true, Varietal: true },
     });

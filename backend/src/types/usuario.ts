@@ -1,4 +1,4 @@
-import { Prisma, Rol_nombre as RolNombre } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 type UsuarioCreateInput = Prisma.UsuarioCreateInput;
 
@@ -9,3 +9,9 @@ export interface CreateUsuarioData extends Omit<UsuarioCreateInput, 'id_usuario'
 }
 
 export interface UpdateUsuarioData extends Partial<CreateUsuarioData> { }
+
+export type UserWithRole = Prisma.UsuarioGetPayload<{
+    include: { Rol: true };
+}>;
+
+export type AuthenticatedUser = Omit<UserWithRole, 'password'>;

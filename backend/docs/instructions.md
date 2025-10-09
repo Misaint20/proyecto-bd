@@ -20,6 +20,11 @@ Nota 2: Estos pasos anteriores ya no son necesario si ya lo hiciste anteriorment
 ```bash
 cd proyecto-bd/backend
 ```
+**Nota**: El comando anterior es solo si no has accedido al directorio principal del proyecto, el siguiente es si has accedido al directorio principal y quieres entrar en el directorio del backend.
+
+```bash
+cd backend
+```
 
 3. Instalar las dependencias del proyecto:
 
@@ -52,19 +57,12 @@ Nota: El archivo init.sql contiene las instrucciones necesarias para crear la ba
 ```bash
 npm run prisma:generate
 ```
-```bash
-npm run prisma:migrate
-```
-
 
 7. Iniciar el servidor de Node.js:
 
 ```bash
 npm run dev
 ```
-
-
-8.
 
 
 ## Notas adicionales

@@ -138,6 +138,6 @@ SET @VENDEDOR_ID = UUID();
 -- Inserción de roles base
 INSERT IGNORE INTO Rol (id_rol, nombre, descripcion) VALUES
 (@ADMIN_ID, 'Administrador', 'Acceso total y gestión de usuarios.'),
-(@BODEGA_ID, 'Encargado de Bodega', 'Control de inventario y recepción de mercancia (RF01).'),
+(@BODEGA_ID, 'Encargado de Bodega', 'Control de inventario y recepcion de mercancia (RF01).'),
 (@ENOLOGO_ID, 'Enologo/Productor', 'Supervision del proceso productivo y calidad (RF02).'),
 (@VENDEDOR_ID, 'Vendedor', 'Atencion a clientes y registro de ventas (RF03).');

@@ -1,8 +1,8 @@
 import prisma from '../lib/PrismaService';
 import { Usuario, Rol, Rol_nombre } from '@prisma/client';
-import { CreateUsuarioData, UpdateUsuarioData } from '../types/usuario';
+import { CreateUsuarioData, UpdateUsuarioData, UserWithRole, AuthenticatedUser } from '../types/usuario';
 import { generateUuid } from '../lib/IdGenerator';
-import { hashPassword } from '../lib/Password';
+import { hashPassword, verifyPassword } from '../lib/Password';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 
@@ -69,4 +69,29 @@ export const findUserById = async (id: string) => {
         where: { id_usuario: id },
         include: { Rol: true },
     });
+};
+
+/**
+ * Valida las credenciales de un usuario (username y password).
+ */
+export const validateUserCredentials = async (username: string, pass: string): Promise<AuthenticatedUser | null> => {
+    
+    // Usamos UserWithRole como el tipo esperado para la consulta
+    const user: UserWithRole | null = await prisma.usuario.findUnique({
+        where: { username },
+        include: { Rol: true }, // Incluimos la relación Rol
+    });
+
+    if (user && user.activo) {
+        const isMatch = await verifyPassword(pass, user.password); // Compara la contraseña hasheada con la contraseña de entrada (RNF04)
+        
+        if (isMatch) {
+            // Destructuramos para omitir la contraseña
+            // El resultado sigue siendo tipado como AuthenticatedUser
+            const { password,...result } = user;
+            
+            return result; // Retornamos el objeto, que ahora incluye Rol.
+        }
+    }
+    return null; // Credenciales inválidas o usuario inactivo
 };
