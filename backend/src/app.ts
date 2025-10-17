@@ -5,6 +5,7 @@ import vinoRoutes from "./routes/VinoRoutes";
 import usuarioRoutes from "./routes/UsuarioRoutes";
 import maestrosRoutes from "./routes/MaestrosRoutes";
 import trazabilidadRoutes from "./routes/TrazabilidadRoutes";
+import inventarioRoutes from "./routes/InventarioRoutes";
 import { requestLogger } from "./middlewares/RequestLogger";
 
 const app = express();
@@ -18,6 +19,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/vinos', vinoRoutes)
 app.use('/api/maestros', maestrosRoutes);
+app.use('/api/inventario', inventarioRoutes);
 // Rutas de trazabilidad (RF02)
 app.use('/api/trazabilidad', trazabilidadRoutes);
 

@@ -7,8 +7,12 @@ export const createUsuario = async (req: Request, res: Response, next: NextFunct
     const data = req.body;
     
     // Validación básica
-    if (!data.username ||!data.password ||!data.id_rol ||!data.nombre ||!data.email) {
+    if (!data.username ||!data.password ||!data.confirmPassword ||!data.id_rol ||!data.nombre ||!data.email) {
         return next(new HttpError('Faltan campos obligatorios (username, password, id_rol, nombre, email).', 400));
+    }
+
+    if(data.password !== data.confirmPassword) {
+        return next(new HttpError('Las contraseñas no coinciden.', 400));
     }
     
     try {

@@ -159,6 +159,21 @@ export const updateBarrica = async (id: string, data: BarricaUpdateData): Promis
     }
 };
 
+export const deleteBarrica = async (id: string): Promise<Barrica> => {
+    try {
+        return await prisma.barrica.delete({
+            where: {
+                id_barrica: id,
+            },
+        });
+    } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw new Error('Barrica no encontrada para eliminar.');
+        }
+        throw error;
+    }
+};
+
 /*
     Servicio para gestionar las mezclas de vino
 */

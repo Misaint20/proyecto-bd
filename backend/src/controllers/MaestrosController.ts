@@ -164,6 +164,20 @@ export const updateBarrica = async (req: Request, res: Response, next: NextFunct
     }
 };
 
+export const deleteBarrica = async (req: Request, res: Response, next: NextFunction) => {
+    const id: string = req.params.id;
+    
+    try {
+        const barricaEliminada = await MaestrosService.deleteBarrica(id);
+        return res.status(200).json({ message: 'Barrica eliminada.', data: barricaEliminada });
+    } catch (error) {
+        if (error instanceof Error && error.message.includes('no encontrado')) {
+            return next(new HttpError(error.message, 404));
+        }
+        next(error);
+    }
+};
+
 export const createMezclaVino = async (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
     
