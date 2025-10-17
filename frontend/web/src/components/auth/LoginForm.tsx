@@ -1,88 +1,93 @@
-'use client';
+"use client"
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import type React from "react"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Eye, EyeOff, User, Lock, LogIn } from "lucide-react"
 
 export default function LoginForm() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('');
-  const router = useRouter();
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter()
 
   const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    
-    if (username && password && role) {
-      
-      switch(role) {
-        case 'admin':
-          router.push('/admin');
-          break;
-        case 'bodeguero':
-          router.push('/bodeguero');
-          break;
-        case 'enologo':
-          router.push('/enologo');
-          break;
-        case 'vendedor':
-          router.push('/vendedor');
-          break;
-        default:
-          alert('Rol no válido');
-      }
+    e.preventDefault()
+
+    if (username && password) {
+      // For demo purposes, route to admin. In production, this would be determined by backend authentication
+      router.push("/admin")
     } else {
-      alert('Por favor completa todos los campos');
+      alert("Por favor completa todos los campos")
     }
-  };
+  }
 
   return (
-    <form onSubmit={handleLogin} className="bg-white p-6 text-black rounded-xl shadow-lg space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Usuario</label>
-        <input 
-        
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
-          placeholder="Ingresa tu usuario"
-        />
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Contraseña</label>
-        <input
-          
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
-          placeholder="Ingresa tu contraseña"
-        />
+    <form
+      onSubmit={handleLogin}
+      className="bg-card p-8 text-card-foreground rounded-2xl shadow-2xl space-y-6 border border-border backdrop-blur-sm"
+    >
+      <div className="text-center space-y-2 pb-4 border-b border-border">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-red-500 mb-2">
+          <LogIn className="w-8 h-8 text-white" />
+        </div>
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-red-600 dark:from-amber-400 dark:to-red-400 bg-clip-text text-transparent">
+          Iniciar Sesión
+        </h2>
+        <p className="text-sm text-muted-foreground">Ingresa tus credenciales para continuar</p>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Rol</label>
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 "
-        >
-          <option value="">Selecciona tu rol</option>
-          <option className='text-black' value="admin">Administrador</option>
-          <option className='text-black' value="bodeguero">Encargado de Bodega</option>
-          <option className="text-black" value="enologo">Enologo/Productor</option>
-          <option className='text-black' value="vendedor">Vendedor</option>
-        </select>
+      <div className="space-y-2">
+        <label className="block text-sm font-semibold text-foreground">Usuario</label>
+        <div className="relative">
+          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-input bg-background text-foreground focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all outline-none"
+            placeholder="tu_usuario"
+          />
+        </div>
       </div>
-      
+
+      <div className="space-y-2">
+        <label className="block text-sm font-semibold text-foreground">Contraseña</label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full pl-10 pr-12 py-3 rounded-lg border-2 border-input bg-background text-foreground focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all outline-none"
+            placeholder="••••••••"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+
       <button
         type="submit"
-        className="w-full bg-amber-600 text-white py-2 px-4 rounded-md hover:bg-amber-700 transition-colors font-medium"
+        className="w-full bg-gradient-to-r from-amber-600 to-red-600 hover:from-amber-700 hover:to-red-700 text-white py-3 px-4 rounded-lg transition-all font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
       >
+        <LogIn className="w-5 h-5" />
         Iniciar Sesión
       </button>
+
+      <div className="text-center pt-2">
+        <button
+          type="button"
+          className="text-sm text-muted-foreground hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+        >
+          ¿Olvidaste tu contraseña?
+        </button>
+      </div>
     </form>
-  );
+  )
 }
