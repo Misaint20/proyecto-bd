@@ -46,6 +46,7 @@ model Detalle_Venta {
   id_vino         String  @db.VarChar(36)
   cantidad        Int
   precio_unitario Decimal @db.Decimal(10, 2)
+  subtotal        Decimal @db.Decimal(10, 2)
   Venta           Venta   @relation(fields: [id_venta], references: [id_venta], onDelete: Cascade, onUpdate: NoAction, map: "Detalle_Venta_ibfk_1")
   Vino            Vino    @relation(fields: [id_vino], references: [id_vino], onDelete: NoAction, onUpdate: NoAction, map: "Detalle_Venta_ibfk_2")
 
@@ -143,6 +144,7 @@ model Venta {
   id_venta      String          @id @db.VarChar(36)
   fecha_venta   DateTime        @db.Date
   cliente       String          @db.VarChar(200)
+  total         Decimal         @db.Decimal(10, 2)
   Detalle_Venta Detalle_Venta[]
 }
 

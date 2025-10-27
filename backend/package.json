@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "prisma:generate": "prisma db pull --force && prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:firts-config": "prisma db pull --force",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "build": "tsc"
@@ -16,11 +17,13 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@prisma/client": "^6.17.1",
+    "@prisma/adapter-mariadb": "^6.18.0",
+    "@prisma/client": "^6.18.0",
     "@types/bcrypt": "^6.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -30,10 +33,11 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.5.2",
     "@types/uuid": "^10.0.0",
-    "prisma": "^6.17.1",
+    "prisma": "^6.18.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.2"

@@ -1,32 +1,50 @@
-import express from "express";
+import express, { Router } from "express";
+import cors from "cors";
 import { errorHandler } from "./middlewares/ErrorHandler";
-import authRoutes from "./routes/AuthRoutes";
-import vinoRoutes from "./routes/VinoRoutes";
-import usuarioRoutes from "./routes/UsuarioRoutes";
-import maestrosRoutes from "./routes/MaestrosRoutes";
-import trazabilidadRoutes from "./routes/TrazabilidadRoutes";
-import inventarioRoutes from "./routes/InventarioRoutes";
+import { logger } from "./utils/logger";
+import { routes } from "./routes";
 import { requestLogger } from "./middlewares/RequestLogger";
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger());
 
-app.use('/api/auth', authRoutes);
+async function loadAndApplyRoutes() {
+    logger.info("Cargando rutas dinámicamente...");
 
-app.use('/api/usuarios', usuarioRoutes);
-app.use('/api/vinos', vinoRoutes)
-app.use('/api/maestros', maestrosRoutes);
-app.use('/api/inventario', inventarioRoutes);
-// Rutas de trazabilidad (RF02)
-app.use('/api/trazabilidad', trazabilidadRoutes);
+    for (const route of routes) {
+        try {
+            const module = await route.module;
+            const router = module.default as Router;
 
-app.get("/", (req, res) => {
-    res.send("API de la Bodega en funcionamiento");
+            if (router) {
+                app.use(route.path, router);
+                logger.info(`Ruta montada: ${route.path}`);
+            } else {
+                logger.error(`Error: El módulo en ${route.path} no exporta un 'default' router.`);
+            }
+
+        } catch (error) {
+            logger.error(`Error al cargar el módulo para la ruta ${route.path}:`, error);
+        }
+    }
+}
+
+loadAndApplyRoutes().then(() => {
+    app.get("/", (req, res) => {
+        res.send("API de la Bodega en funcionamiento");
+    });
+
+    app.use(errorHandler);
+
+    logger.info("Todas las rutas han sido cargadas.");
+}).catch((error) => {
+    logger.error("Error al cargar las rutas dinámicamente:", error);
+    process.exit(1);
 });
-
-app.use(errorHandler);
 
 export default app;

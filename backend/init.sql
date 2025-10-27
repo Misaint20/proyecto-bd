@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS Venta (
     id_venta VARCHAR(36) PRIMARY KEY,
     fecha_venta DATE NOT NULL,
     cliente VARCHAR(200) NOT NULL
+    total DECIMAL(10, 2) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Mezcla_Vino (
@@ -105,6 +106,7 @@ CREATE TABLE IF NOT EXISTS Detalle_Venta (
     id_vino VARCHAR(36) NOT NULL,
     cantidad INT NOT NULL,
     precio_unitario DECIMAL(10, 2) NOT NULL,
+    subtotal DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_venta) REFERENCES Venta(id_venta) ON DELETE CASCADE,
     FOREIGN KEY (id_vino) REFERENCES Vino(id_vino)
 );
