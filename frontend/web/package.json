@@ -8,9 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
+    "axios": "^1.13.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cookie": "^1.0.2",
+    "jose": "^6.1.0",
     "lucide-react": "^0.546.0",
     "next": "15.5.4",
     "next-themes": "^0.4.6",

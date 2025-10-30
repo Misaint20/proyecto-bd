@@ -1,4 +1,5 @@
 import { Users, TrendingUp, Package, UserPlus, FileText, Settings, BarChart3, Activity } from "lucide-react"
+import Link from "next/link"
 
 export default function AdminDashboard() {
   return (
@@ -57,14 +58,18 @@ export default function AdminDashboard() {
             Gestión de Usuarios
           </h3>
           <div className="space-y-3">
-            <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
+            <Link
+              href="/admin/users"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
               <Users className="w-5 h-5 group-hover:scale-110 transition-transform" />
               Ver todos los usuarios
-            </button>
-            <button className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl hover:from-green-600 hover:to-green-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
+            </Link>
+            <Link
+              href="/admin/users/new"
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl hover:from-green-600 hover:to-green-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
               <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
               Crear nuevo usuario
-            </button>
+            </Link>
             <button className="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-4 rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
               <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
               Reportes de usuarios
@@ -92,12 +97,16 @@ export default function AdminDashboard() {
           Acceso Rápido
         </h3>
         <div className="flex gap-3 flex-wrap">
-          <button className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
+          <Link 
+            href="/admin/ventas"
+          className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
             Ventas
-          </button>
-          <button className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
+          </Link>
+          <Link 
+            href="/admin/vinos"
+            className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
             Vinos
-          </button>
+          </Link>
         </div>
       </div>
 

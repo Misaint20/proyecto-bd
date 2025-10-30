@@ -4,19 +4,25 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, User, Lock, LogIn } from "lucide-react"
+import { login, getDashboardPath } from "@/services/AuthService"
 
 export default function LoginForm() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  const router = useRouter()
+  const router = useRouter();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (username && password) {
-      // For demo purposes, route to admin. In production, this would be determined by backend authentication
-      router.push("/admin")
+      login(username, password).then(result => {
+        if (result.success && result.role) {
+          router.push(getDashboardPath(result.role))
+        } else {
+          alert(result.errorMessage)
+        }
+      })
     } else {
       alert("Por favor completa todos los campos")
     }

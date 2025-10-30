@@ -95,3 +95,7 @@ export const validateUserCredentials = async (username: string, pass: string): P
     }
     return null; // Credenciales inválidas o usuario inactivo
 };
+
+export const getRoles = async () => {
+    return prisma.rol.findMany();
+};

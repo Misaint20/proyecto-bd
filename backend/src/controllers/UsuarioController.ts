@@ -5,6 +5,8 @@ import { HttpError } from '../middlewares/ErrorHandler';
 // Endpoint para crear un nuevo usuario
 export const createUsuario = async (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
+
+    console.log('Creando usuario:', data);
     
     // Validación básica
     if (!data.username ||!data.password ||!data.confirmPassword ||!data.id_rol ||!data.nombre ||!data.email) {
