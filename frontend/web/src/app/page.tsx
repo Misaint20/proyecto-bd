@@ -20,7 +20,6 @@ export default function Home() {
             />
           </div>
         </div>
-
         <header className="text-center space-y-2">
           <h1 className="text-6xl font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 dark:from-amber-400 dark:via-orange-400 dark:to-red-400 bg-clip-text text-transparent">
             Bienvenido

@@ -1,6 +1,10 @@
+"use client"
+import { useRouter } from "next/navigation"
+
 import { Users, TrendingUp, Package, UserPlus, FileText, Settings, BarChart3, Activity } from "lucide-react"
 
 export default function AdminDashboard() {
+  const router = useRouter()
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mb-8 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 p-8 rounded-2xl shadow-lg">
@@ -16,7 +20,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 group">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl shadow-l-lg hover:shadow-xl transition-all hover:scale-105 group">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-white/90">Total Usuarios</h3>
@@ -92,10 +96,14 @@ export default function AdminDashboard() {
           Acceso Rápido
         </h3>
         <div className="flex gap-3 flex-wrap">
-          <button className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
+          <button 
+            onClick={()=> router.push('admin/ventas')}
+            className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
             Ventas
           </button>
-          <button className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
+          <button 
+            onClick={()=> router.push('admin/vinos')}
+            className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
             Vinos
           </button>
         </div>

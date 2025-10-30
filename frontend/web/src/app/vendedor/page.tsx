@@ -1,5 +1,6 @@
 import { ShoppingCart, Wine, DollarSign, Users, Award } from "lucide-react"
 
+
 export default function VendedorDashboard() {
   return (
     <div className="min-h-screen bg-background p-6">
