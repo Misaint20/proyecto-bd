@@ -8,7 +8,3 @@ export interface Vino {
     meses_barrica?: number
     descripcion?: string
 }
-
-export interface VinoData {
-    
-}

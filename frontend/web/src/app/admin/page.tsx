@@ -83,10 +83,12 @@ export default function AdminDashboard() {
             Configuración del Sistema
           </h3>
           <div className="space-y-3">
-            <button className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-4 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
+            <Link
+              href="/admin/settings"
+              className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-4 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
               <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform" />
               Configuración general
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -106,6 +108,11 @@ export default function AdminDashboard() {
             href="/admin/vinos"
             className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
             Vinos
+          </Link>
+          <Link 
+            href="/admin/inventory"
+            className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
+            Inventario
           </Link>
         </div>
       </div>

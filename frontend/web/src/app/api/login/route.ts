@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         // Access Token (HttpOnly para máxima seguridad)
         const serializedToken = serialize('access_token', access_token, {
             httpOnly: true, // NO accesible por JavaScript en el navegador
-            secure: process.env.NODE_ENV === 'development' , // Solo en HTTPS en producción
+            secure: process.env.NODE_ENV === 'production' , // Solo en HTTPS en producción
             sameSite: 'strict', // Protección contra CSRF
             maxAge: 60 * 60 * 24, // 24 horas (ajusta según tu necesidad)
             path: '/',
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         // Rol del Usuario (No HttpOnly para que el Middleware y el cliente puedan leerlo)
         const serializedRole = serialize('user_role', user_info.role, {
             httpOnly: true, // Accesible por JS y Middleware
-            secure: process.env.NODE_ENV === 'development',
+            secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
             maxAge: 60 * 60 * 24,
             path: '/',

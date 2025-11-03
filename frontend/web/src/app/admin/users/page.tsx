@@ -1,6 +1,6 @@
 "use client"
 
-import { Users, Search, UserPlus, Edit, Trash2, Shield, User, Loader2 } from "lucide-react"
+import { Users, Search, UserPlus, Edit, Trash2, Shield, User, Loader2, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect, useMemo } from "react"
 import { getUsers } from "@/services/UsersService" // Importar la función de servicio
@@ -29,7 +29,7 @@ interface ApiUser {
     fecha_actualizacion: string;
     Rol: {
         id_rol: string;
-        nombre: string; 
+        nombre: string;
         descripcion: string;
     };
 }
@@ -62,14 +62,14 @@ const mapApiUsersToComponent = (apiUsers: ApiUser[]): UserData[] => {
         // Formatear la fecha para una mejor visualización si es necesario, 
         // aquí solo se toma la parte de la fecha
         createdAt: user.fecha_creacion.split('T')[0],
-        roleName: user.Rol.nombre, 
-        role: getInternalRoleKey(user.Rol.nombre), 
+        roleName: user.Rol.nombre,
+        role: getInternalRoleKey(user.Rol.nombre),
     }));
 };
 
 export default function UsersPage() {
     const [searchTerm, setSearchTerm] = useState("")
-    const [users, setUsers] = useState<UserData[]>([]) 
+    const [users, setUsers] = useState<UserData[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -139,6 +139,13 @@ export default function UsersPage() {
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="mb-8 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 p-8 rounded-2xl shadow-lg">
+                    <Link
+                        href="/admin/"
+                        className="inline-flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors group"
+                    >
+                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        Volver al dashboard
+                    </Link>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">

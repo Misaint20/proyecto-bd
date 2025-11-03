@@ -1,4 +1,5 @@
 import Image from "next/image"
+import Link from "next/link"
 import { Package, Wine, AlertTriangle, ClipboardCheck, PackagePlus, PackageMinus, Search } from "lucide-react"
 
 export default function BodegueroDashboard() {
@@ -62,18 +63,24 @@ export default function BodegueroDashboard() {
             Gestión de Inventario
           </h3>
           <div className="space-y-3">
-            <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
+            <Link
+              href="/bodeguero/inventory"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
               <Search className="w-5 h-5 group-hover:scale-110 transition-transform" />
               Ver inventario completo
-            </button>
-            <button className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl hover:from-green-600 hover:to-green-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
+            </Link>
+            <Link 
+              href="/bodeguero/inventory"
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl hover:from-green-600 hover:to-green-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
               <PackagePlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
               Registrar entrada
-            </button>
-            <button className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-4 rounded-xl hover:from-red-600 hover:to-red-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
+            </Link>
+            <Link 
+              href="/bodeguero/inventory"
+              className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-4 rounded-xl hover:from-red-600 hover:to-red-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
               <PackageMinus className="w-5 h-5 group-hover:scale-110 transition-transform" />
               Registrar salida
-            </button>
+            </Link>
           </div>
         </div>
 
