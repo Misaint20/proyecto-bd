@@ -32,7 +32,7 @@ import MezclaVinoModal from "@/components/inventory/MezclaVinoModal"
 import { Vinedo, Varietal, Barrica, MezclaVino } from "@/types/masters"
 import { Inventario } from "@/types/inventory";
 import { getVinedos, getVarietales, getBarricas, getMezclasVino } from "@/services/MastersService";
-import { getInventario } from "@/services/InventoryService";
+import { getInventario, deleteInventario } from "@/services/InventoryService";
 
 export default function InventoryPage() {
     const [activeTab, setActiveTab] = useState<"vinedos" | "varietales" | "barricas" | "inventario" | "mezclas">(
@@ -99,6 +99,22 @@ export default function InventoryPage() {
         if (type === "barricas") setBarricaModalOpen(true)
         if (type === "inventario") setInventarioModalOpen(true)
         if (type === "mezclas") setMezclaModalOpen(true)
+    }
+
+    const handleDelete = async (id: string) => {
+        if (!window.confirm("¿Estás seguro de que quieres eliminar este registro?")) {
+            return
+        }
+
+        const result = await deleteInventario(id)
+
+        if (result && result.success) {
+            fetchData(getInventario, setInventarios, "Inventario")
+        } else if (result) {
+            console.error("Error al eliminar:", result.errorMessage)
+        } else {
+            console.error("Error: No se pudo obtener respuesta del servicio al eliminar.")
+        }
     }
 
     const tabs = [
@@ -170,7 +186,7 @@ export default function InventoryPage() {
                             <div>
                                 <p className="text-blue-100 text-sm font-medium">Total Botellas</p>
                                 <p className="text-3xl font-bold mt-1">
-                                    {inventarios.reduce((acc, inv) => acc + inv.cantidad_botellas, 0)}
+                                    {inventarios.reduce((acc, inv) => acc + inv.Lote.cantidad_botellas, 0)}
                                 </p>
                             </div>
                             <Package className="h-12 w-12 opacity-80" />
@@ -451,7 +467,7 @@ export default function InventoryPage() {
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
                                                     <Package className="h-5 w-5 text-muted-foreground" />
-                                                    <span className="font-semibold text-foreground">{inventario.cantidad_botellas}</span>
+                                                    <span className="font-semibold text-foreground">{inventario.Lote.cantidad_botellas}</span>
                                                     <span className="text-muted-foreground text-sm">botellas</span>
                                                 </div>
                                             </td>
@@ -468,6 +484,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
+                                                        onClick={() => handleDelete(inventario.id_inventario)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-4 w-4" />

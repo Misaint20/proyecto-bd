@@ -1,6 +1,6 @@
 import prisma from '../lib/PrismaService';
 import { Inventario } from '@prisma/client';
-import { CreateInventarioData, UpdateInventarioData } from '../types/inventario';
+import { CreateInventarioData } from '../types/inventario';
 import { generateUuid } from '../lib/IdGenerator';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { logger } from '../utils/logger';
@@ -27,9 +27,17 @@ export const createOrUpdateInventario = async (data: CreateInventarioData): Prom
     }
 
     try {
-        // Usamos una transacción para garantizar atomicidad en la operación
+        // Usamos una transacción para garantizar atomicidad en la operación.
         const result = await prisma.$transaction(async (tx) => {
-            
+
+            // 0. Verificar que el lote exista y obtener su cantidad actual
+            const lote = await tx.lote.findUniqueOrThrow({ where: { id_lote: data.id_lote } });
+
+            // Si la operación es negativa, verificar que el lote tenga suficientes botellas
+            if (data.cantidad_botellas < 0 && lote.cantidad_botellas + data.cantidad_botellas < 0) {
+                throw new Error('No hay suficientes botellas en el Lote seleccionado para realizar esta salida.');
+            }
+
             // 1. Intentar encontrar un registro existente para ese lote y ubicación
             const existingInventory = await tx.inventario.findFirst({
                 where: {
@@ -38,26 +46,36 @@ export const createOrUpdateInventario = async (data: CreateInventarioData): Prom
                 },
             });
 
+            let inventoryRecord: Inventario;
             if (existingInventory) {
-                // 2. Si existe, actualizar la cantidad sumando el nuevo valor
-                return tx.inventario.update({
-                    where: { id_inventario: existingInventory.id_inventario },
-                    data: {
-                        cantidad_botellas: existingInventory.cantidad_botellas + data.cantidad_botellas,
-                    },
-                });
+                // Si ya existe un registro de inventario para esa ubicación, lo devolvemos tal cual.
+                inventoryRecord = existingInventory;
             } else {
-                // 3. Si no existe, crear un nuevo registro
-                return tx.inventario.create({
+                // Si no existe registro y se intenta retirar (cantidad negativa), eso no tiene sentido
+                // porque no hay un registro de ubicación desde la que retirar.
+                if (data.cantidad_botellas < 0) {
+                    throw new Error('No es posible retirar desde una ubicación sin registro de inventario.');
+                }
+
+                // Crear el registro de inventario (sin cantidad de botellas)
+                inventoryRecord = await tx.inventario.create({
                     data: {
                         id_inventario: newId,
                         id_lote: data.id_lote,
                         ubicacion: data.ubicacion,
-                        cantidad_botellas: data.cantidad_botellas,
                     },
                 });
             }
+
+            // 2. Actualizar la cantidad total del Lote (reflejar la entrada/salida)
+            await tx.lote.update({
+                where: { id_lote: data.id_lote },
+                data: { cantidad_botellas: { increment: data.cantidad_botellas } },
+            });
+
+            return inventoryRecord;
         });
+
         return result;
     } catch (error) {
         logger.error('Error al registrar/actualizar Inventario.', { context: 'InventarioService', error });

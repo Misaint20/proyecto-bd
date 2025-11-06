@@ -1,7 +1,43 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { Users, TrendingUp, Package, UserPlus, FileText, Settings, BarChart3, Activity } from "lucide-react"
 import Link from "next/link"
+import { getUsers } from "@/services/UsersService"
+import { getInventario } from "@/services/InventoryService"
 
 export default function AdminDashboard() {
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [totalUsers, setTotalUsers] = useState(0)
+  const [inventario, setInventario] = useState<any[]>([])
+
+  const fetchData = async (apiCall: any, setter: any, dataName = "datos") => {
+    try {
+      const result = await apiCall();
+
+      if (result && result.success) {
+        setter(result.data.data);
+      } else if (result) {
+        console.error(`Error al obtener ${dataName}: ${result.errorMessage}`);
+        setter([]);
+      } else {
+        console.error(`Error: No se pudo obtener respuesta del servicio para ${dataName}.`);
+        setter([]);
+      }
+    } catch (error) {
+      // Captura errores de red o errores lanzados por apiCall antes del manejo de la respuesta 'result'
+      console.error(`Error inesperado al intentar obtener ${dataName}:`, error);
+      setter([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(getUsers, (data: any[]) => setTotalUsers(data.length), "usuarios");
+    fetchData(getInventario, (data: any[]) => setInventario(data), "inventario");
+    setIsLoading(false);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="mb-8 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 p-8 rounded-2xl shadow-lg">
@@ -21,7 +57,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-white/90">Total Usuarios</h3>
-              <p className="text-4xl font-bold text-white mt-2">5</p>
+              <p className="text-4xl font-bold text-white mt-2">{totalUsers}</p>
               <p className="text-white/80 text-sm mt-1">Activos en el sistema</p>
             </div>
             <Users className="w-12 h-12 text-white/30 group-hover:text-white/50 transition-colors" />
@@ -43,7 +79,7 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-semibold text-white/90">Inventario</h3>
-              <p className="text-4xl font-bold text-white mt-2">2,845</p>
+              <p className="text-4xl font-bold text-white mt-2">{inventario.reduce((acc, inv) => acc + inv.Lote.cantidad_botellas, 0)}</p>
               <p className="text-white/80 text-sm mt-1">Productos en stock</p>
             </div>
             <Package className="w-12 h-12 text-white/30 group-hover:text-white/50 transition-colors" />
@@ -99,17 +135,17 @@ export default function AdminDashboard() {
           Acceso Rápido
         </h3>
         <div className="flex gap-3 flex-wrap">
-          <Link 
+          <Link
             href="/admin/ventas"
-          className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
+            className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
             Ventas
           </Link>
-          <Link 
+          <Link
             href="/admin/vinos"
             className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
             Vinos
           </Link>
-          <Link 
+          <Link
             href="/admin/inventory"
             className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
             Inventario

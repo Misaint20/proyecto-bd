@@ -1,6 +1,6 @@
 // src/services/VentasService.ts (Fragmento crucial de la función registerVentaTransaction)
 import prisma from '../lib/PrismaService';
-import { Venta, Detalle_Venta, Inventario } from '@prisma/client';
+import { Venta, Detalle_Venta, Inventario, Lote } from '@prisma/client';
 import { VentaCreationData} from '../types/ventas';
 import { generateUuid } from '../lib/IdGenerator';
 import { logger } from '../utils/logger';
@@ -19,7 +19,7 @@ export const registerVentaTransaction = async (
     try {
         const result = await prisma.$transaction(async (tx) => {
             const detalleCreations: Promise<Detalle_Venta>[] = [];
-            const inventoryUpdates: Promise<Inventario>[] = [];
+            const loteUpdates: Promise<Lote>[] = [];
             
             // 1. Verificar stock y construir detalles de venta
             for (const item of data.detalles) {
@@ -53,9 +53,9 @@ export const registerVentaTransaction = async (
                     throw new Error(`El Lote ${lote.numero_lote} no tiene stock registrado en ninguna ubicación.`);
                 }
 
-                inventoryUpdates.push(
-                    tx.inventario.update({
-                        where: { id_inventario: inventarioRecord.id_inventario },
+                loteUpdates.push(
+                    tx.lote.update({
+                        where: { id_lote: item.id_lote },
                         data: {
                             cantidad_botellas: {
                                 decrement: item.cantidad, // Deducción atómica
@@ -91,7 +91,7 @@ export const registerVentaTransaction = async (
             
             // 3. Ejecutar la deducción de inventario y los detalles de venta
             const createdDetails = await Promise.all(detalleCreations);
-            await Promise.all(inventoryUpdates);
+            await Promise.all(loteUpdates);
             
             // 4. Devolver el total calculado en la capa de aplicación
             return {...ventaHeader, detalles: createdDetails, total: totalVenta };

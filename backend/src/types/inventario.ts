@@ -8,7 +8,7 @@ export interface CreateInventarioData extends Omit<CreateInventarioInput,
 > {
     id_lote: string;
     ubicacion: Inventario_ubicacion;
-    caantidad_botellas: number;
+    cantidad_botellas: number;
 }
 
 export interface UpdateInventarioData extends Partial<CreateInventarioData> {}

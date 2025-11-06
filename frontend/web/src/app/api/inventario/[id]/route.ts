@@ -7,12 +7,11 @@ interface Context {
     params: { id: string };
 }
 
-export const PATCH = async (req: NextRequest, { params }: Context ) => {
-    const { id } = await params;
+export const PATCH = async (req: NextRequest ) => {
     try {
         const body = await req.json();
-        const response = await fetch(`${BACKEND_URL}/api/inventario/${id}`, {
-            method: 'PATCH',
+        const response = await fetch(`${BACKEND_URL}/api/inventario/entrada`, {
+            method: 'POST',
             headers: await getAuthHeaders(req),
             body: JSON.stringify(body)
         });
@@ -25,7 +24,7 @@ export const PATCH = async (req: NextRequest, { params }: Context ) => {
 
         return NextResponse.json(data);
     } catch (error) {
-        return NextResponse.json({ message: 'Error al actualizar inventario' }, { status: 500 });
+        return NextResponse.json({ message: 'Error al actualizar inventario / Revise stock' }, { status: 500 });
     }
 };
 

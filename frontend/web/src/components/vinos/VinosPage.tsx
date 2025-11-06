@@ -5,11 +5,13 @@ import { Wine, Plus, Search, Edit, Trash2, ArrowLeft, Package, DollarSign, Spark
 import { useRouter } from "next/navigation"
 import VinoModal from "@/components/vinos/VinosModal"
 import { getVinos, deleteVino } from "@/services/VinosService"
+import { getInventario } from "@/services/InventoryService"
 import type { Vino } from "@/types/vino"
 
 export default function VinosPageContent() {
     const router = useRouter()
     const [vinos, setVinos] = useState<Vino[]>([])
+    const [inventario, setInventario] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
     const [searchTerm, setSearchTerm] = useState("")
@@ -22,28 +24,35 @@ export default function VinosPageContent() {
             vino.tipo.toLowerCase().includes(searchTerm.toLowerCase()),
     )
 
-    const fetchVinos = async () => {
+    const fetchData = async (apiCall: any, setter: any, dataName = "datos") => {
         setLoading(true)
-        const result = await getVinos()
+        try {
+            const result = await apiCall();
 
-        if (result && result.success) {
-            setVinos(result.data)
-            setError("")
-        } else if (result) {
-            console.error(result.errorMessage)
-            setError(result.errorMessage ?? "")
-            setVinos([])
-        } else {
-            console.error("Error: No se pudo obtener respuesta del servicio.")
-            setError("No se pudo obtener respuesta del servicio.")
-            setVinos([])
+            if (result && result.success) {
+                if (!result.data.data) setter(result.data);
+                else setter(result.data.data);
+            } else if (result) {
+                console.error(`Error al obtener ${dataName}: ${result.errorMessage}`);
+                setter([]);
+            } else {
+                console.error(`Error: No se pudo obtener respuesta del servicio para ${dataName}.`);
+                setter([]);
+            }
+        } catch (error) {
+            // Captura errores de red o errores lanzados por apiCall antes del manejo de la respuesta 'result'
+            console.error(`Error inesperado al intentar obtener ${dataName}:`, error);
+            setter([]);
         }
         setLoading(false)
-    }
+    };
 
     useEffect(() => {
-        fetchVinos()
-    }, [])
+        // Llama a la función genérica con la función de API y la función de estado correspondiente.
+        fetchData(getVinos, setVinos, "Vinos");
+        fetchData(getInventario, setInventario, "Inventario");
+    }, []);
+
 
     const handleDelete = async (id_vino: string) => {
         if (!window.confirm("¿Estás seguro de que quieres eliminar este vino?")) {
@@ -53,15 +62,13 @@ export default function VinosPageContent() {
         const result = await deleteVino(id_vino)
 
         if (result && result.success) {
-            fetchVinos()
+            fetchData(getVinos, setVinos, "Vinos")
         } else if (result) {
             console.error("Error al eliminar:", result.errorMessage)
         } else {
             console.error("Error: No se pudo obtener respuesta del servicio al eliminar.")
         }
     }
-
-    const calcularStock = (botellas?: number) => botellas || 0
 
     return (
         <div className="min-h-screen bg-background p-6">
@@ -125,7 +132,7 @@ export default function VinosPageContent() {
                         <div>
                             <h3 className="text-white/90 text-lg font-semibold">Botellas Totales</h3>
                             <p className="text-4xl font-bold text-white mt-2">
-                                {vinos.reduce((acc, v) => acc + calcularStock(v.botellas_por_caja), 0)}
+                                {inventario.reduce((acc, inv) => acc + inv.Lote.cantidad_botellas, 0)}
                             </p>
                         </div>
                         <div className="bg-white/20 p-4 rounded-xl backdrop-blur-sm group-hover:scale-110 transition-transform">
@@ -140,7 +147,7 @@ export default function VinosPageContent() {
                             <p className="text-4xl font-bold text-white mt-2">
                                 $
                                 {vinos
-                                    .reduce((acc, v) => acc + Number(v.precio_botella) * calcularStock(v.botellas_por_caja), 0)
+                                    .reduce((acc, v) => acc + Number(v.precio_botella) * (inventario.reduce((acc, inv) => acc + inv.Lote.cantidad_botellas, 0)), 0)
                                     .toLocaleString()}
                             </p>
                         </div>
@@ -253,7 +260,7 @@ export default function VinosPageContent() {
                         setEditingVino(null)
                     }}
                     onSuccess={() => {
-                        fetchVinos()
+                        fetchData(getVinos, setVinos, "Vinos")
                         setShowModal(false)
                         setEditingVino(null)
                     }}

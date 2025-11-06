@@ -268,9 +268,14 @@ interface UpdateBarricaData extends Partial<Barrica> {}
  */
 export async function createBarrica(data: NewBarricaData) {
     try {
+        const body = {
+            ...data,
+            fecha_compra: data.fecha_compra ? new Date(data.fecha_compra).toISOString() : null,
+        }
+
         const response = await fetch(API_ROUTE_URL + "/barricas", {
             method: "POST",
-            body: JSON.stringify(data),
+            body: JSON.stringify(body),
         });
         if (response.ok) {
             const data = await response.json();

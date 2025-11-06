@@ -119,10 +119,9 @@ export const createLote = async (data: LoteCreationData): Promise<Lote> => {
                 id_lote: newId,
                 id_vino: data.id_vino,
                 id_cosecha: data.id_cosecha,
-                // id_barrica es opcional
                 id_barrica: data.id_barrica,
                 fecha_embotellado: data.fecha_embotellado,
-                cantidad_botellas: data.cantidad_botellas,
+                cantidad_botellas: data.cantidad_botellas || 0,
                 numero_lote: data.numero_lote,
             },
             include: { Vino: true, Cosecha: true },
@@ -174,9 +173,25 @@ export const updateLote = async (id: string, data: LoteUpdateData): Promise<Lote
  * Obtiene todos los lotes con sus relaciones de Vino y Cosecha.
  */
 export const findAllLotes = async (): Promise<Lote[]> => {
-    return prisma.lote.findMany({
+    const lotes = await prisma.lote.findMany({
         include: { Vino: true, Cosecha: { include: { Vinedo: true } }, Barrica: true },
     });
+
+    // Agregamos un campo calculado 'meses_en_barrica' cuando el lote tiene una barrica asociada
+    const now = new Date();
+    const computeMonths = (date?: Date | string | null) => {
+        if (!date) return 0;
+        const d = new Date(date);
+        const months = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+        return months > 0 ? months : 0;
+    };
+
+    // Nota: no persistimos estos valores a la DB, solo se devuelven en la respuesta del servicio
+    return lotes.map(l => ({
+        ...l,
+        // Si no tiene barrica, meses_en_barrica = 0
+        meses_en_barrica: l.id_barrica ? computeMonths((l as any).fecha_embotellado) : 0,
+    } as any));
 };
 
 /**

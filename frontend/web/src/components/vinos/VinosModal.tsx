@@ -24,7 +24,6 @@ export default function VinoModal({
         anio_cosecha: vino?.anio_cosecha || new Date().getFullYear(),
         precio_botella: vino?.precio_botella || 0,
         botellas_por_caja: vino?.botellas_por_caja || 12,
-        meses_barrica: vino?.meses_barrica || 0,
         descripcion: vino?.descripcion || "",
     })
     const [error, setError] = useState("")
@@ -166,21 +165,6 @@ export default function VinoModal({
                                 className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-foreground"
                             />
                             <p className="text-xs text-muted-foreground mt-1.5 ml-1">Por defecto: 12 botellas</p>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-green-600" />
-                                Meses en Barrica
-                            </label>
-                            <input
-                                type="number"
-                                min="0"
-                                value={formData.meses_barrica}
-                                onChange={(e) => setFormData({ ...formData, meses_barrica: Number.parseInt(e.target.value) || 0 })}
-                                className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all text-foreground"
-                            />
-                            <p className="text-xs text-muted-foreground mt-1.5 ml-1">Por defecto: 0 meses</p>
                         </div>
                     </div>
 

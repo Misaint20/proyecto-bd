@@ -79,7 +79,6 @@ CREATE TABLE IF NOT EXISTS Inventario (
     id_inventario VARCHAR(36) PRIMARY KEY,
     id_lote VARCHAR(36) NOT NULL,
     ubicacion ENUM('Barricas', 'Oficina', 'Almacenamiento', 'Produccion') NOT NULL,
-    cantidad_botellas INT NOT NULL,
     FOREIGN KEY (id_lote) REFERENCES Lote(id_lote)
 );
 

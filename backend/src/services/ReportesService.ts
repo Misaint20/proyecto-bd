@@ -17,11 +17,11 @@ export const getInventarioValorizado = async () => {
     // (Stock * Precio Venta) por cada lote en inventario.
     const inventarioValorizado = await prisma.inventario.findMany({
         select: {
-            cantidad_botellas: true,
             ubicacion: true,
             Lote: {
                 select: {
                     numero_lote: true,
+                    cantidad_botellas: true,
                     Vino: {
                         select: {
                             nombre: true,
@@ -37,14 +37,14 @@ export const getInventarioValorizado = async () => {
     let valorTotal = 0;
     const detalles = inventarioValorizado.map(item => {
         const precio = item.Lote.Vino.precio_botella.toNumber();
-        const valorLote = item.cantidad_botellas * precio;
+        const valorLote = item.Lote.cantidad_botellas * precio;
         valorTotal += valorLote;
 
         return {
             numero_lote: item.Lote.numero_lote,
             vino: item.Lote.Vino.nombre,
             ubicacion: item.ubicacion,
-            stock: item.cantidad_botellas,
+            stock: item.Lote.cantidad_botellas,
             precio_unitario: precio,
             valor_stock_lote: valorLote,
         };

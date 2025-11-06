@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { X, Package, MapPin, Hash } from "lucide-react"
+import { X, Package, MapPin, Hash, Plus, Minus } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createInventario, updateInventario } from "@/services/InventoryService"
 import { getLotes } from "@/services/TraceabilityService"
@@ -17,9 +17,10 @@ type InventarioModalProps = {
 
 export default function InventarioModal({ open, onClose, inventario, onSuccess }: InventarioModalProps) {
     const [formData, setFormData] = useState({
-        numero_lote: inventario?.numero_lote || "",
+        id_lote: inventario?.numero_lote || "",
         ubicacion: inventario?.ubicacion || "",
         cantidad_botellas: inventario?.cantidad_botellas?.toString() || "",
+        tipo_operacion: "aumentar",
     })
     const [error, setError] = useState("")
     const [lotes, setLotes] = useState<Lote[]>([])
@@ -42,15 +43,23 @@ export default function InventarioModal({ open, onClose, inventario, onSuccess }
         e.preventDefault()
         setError("")
 
-        if (!formData.numero_lote || !formData.ubicacion || !formData.cantidad_botellas) {
+        if (!formData.id_lote || !formData.ubicacion || !formData.cantidad_botellas) {
             setError("Por favor, complete todos los campos obligatorios.")
             return
         }
 
+        let cantidadFinal = Number.parseInt(formData.cantidad_botellas)
+
+        if (inventario && formData.tipo_operacion === "reducir") {
+            cantidadFinal = -Math.abs(cantidadFinal)
+        } else {
+            cantidadFinal = Math.abs(cantidadFinal)
+        }
+
         const dataToSend = {
-            numero_lote: formData.numero_lote,
+            id_lote: formData.id_lote,
             ubicacion: formData.ubicacion,
-            cantidad_botellas: Number.parseInt(formData.cantidad_botellas),
+            cantidad_botellas: cantidadFinal,
         }
 
         const isUpdate = inventario !== null && inventario.id_inventario
@@ -104,16 +113,13 @@ export default function InventarioModal({ open, onClose, inventario, onSuccess }
                             <Hash className="w-4 h-4 text-blue-600" />
                             Número de Lote *
                         </label>
-                        <Select
-                            value={formData.numero_lote}
-                            onValueChange={(value) => setFormData({ ...formData, numero_lote: value })}
-                        >
+                        <Select value={formData.id_lote} onValueChange={(value) => setFormData({ ...formData, id_lote: value })}>
                             <SelectTrigger className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-foreground font-mono">
                                 <SelectValue placeholder="Selecciona el número de lote" />
                             </SelectTrigger>
                             <SelectContent>
                                 {lotes.map((lote) => (
-                                    <SelectItem key={lote.id_lote} value={lote.numero_lote} className="font-mono">
+                                    <SelectItem key={lote.id_lote} value={lote.id_lote} className="font-mono">
                                         {lote.numero_lote}
                                     </SelectItem>
                                 ))}
@@ -134,7 +140,7 @@ export default function InventarioModal({ open, onClose, inventario, onSuccess }
                                 <SelectValue placeholder="Selecciona la ubicación" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="Bodega Principal">Bodega Principal</SelectItem>
+                                <SelectItem value="Oficina">Oficina</SelectItem>
                                 <SelectItem value="Bodega Secundaria">Bodega Secundaria</SelectItem>
                                 <SelectItem value="Almacén Norte">Almacén Norte</SelectItem>
                                 <SelectItem value="Almacén Sur">Almacén Sur</SelectItem>
@@ -142,6 +148,37 @@ export default function InventarioModal({ open, onClose, inventario, onSuccess }
                             </SelectContent>
                         </Select>
                     </div>
+
+                    {inventario && (
+                        <div>
+                            <label className="block text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
+                                <Package className="w-4 h-4 text-blue-600" />
+                                Tipo de Operación *
+                            </label>
+                            <Select
+                                value={formData.tipo_operacion}
+                                onValueChange={(value) => setFormData({ ...formData, tipo_operacion: value })}
+                            >
+                                <SelectTrigger className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-foreground">
+                                    <SelectValue placeholder="Selecciona el tipo de operación" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="aumentar">
+                                        <div className="flex items-center gap-2">
+                                            <Plus className="w-4 h-4 text-green-600" />
+                                            <span>Aumentar cantidad</span>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="reducir">
+                                        <div className="flex items-center gap-2">
+                                            <Minus className="w-4 h-4 text-red-600" />
+                                            <span>Reducir cantidad</span>
+                                        </div>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
 
                     <div>
                         <label className="block text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
@@ -156,6 +193,7 @@ export default function InventarioModal({ open, onClose, inventario, onSuccess }
                                 <SelectValue placeholder="Selecciona la cantidad" />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem value="0">0 botellas</SelectItem>
                                 <SelectItem value="100">100 botellas</SelectItem>
                                 <SelectItem value="250">250 botellas</SelectItem>
                                 <SelectItem value="500">500 botellas</SelectItem>

@@ -4,5 +4,6 @@ export interface Inventario {
     cantidad_botellas: number;
     Lote: {
         numero_lote: string;
+        cantidad_botellas: number;
     };
 }

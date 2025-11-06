@@ -17,11 +17,6 @@ export const registerInventoryEntry = async (req: Request, res: Response, next: 
     if (!data.id_lote ||!data.ubicacion ||!data.cantidad_botellas) {
         return next(new HttpError('Faltan campos obligatorios para Inventario: id_lote, ubicacion, cantidad_botellas.', 400));
     }
-
-    // Validación: La cantidad debe ser positiva para una entrada o ajuste de suma
-    if (data.cantidad_botellas <= 0) {
-        return next(new HttpError('La cantidad de botellas debe ser mayor a cero para el registro de entrada.', 400));
-    }
     
     try {
         const nuevoStock = await InventarioService.createOrUpdateInventario(data);

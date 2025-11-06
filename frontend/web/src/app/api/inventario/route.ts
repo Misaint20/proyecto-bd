@@ -25,7 +25,7 @@ export const GET = async (req: NextRequest) => {
 export const POST = async (req: NextRequest) => {
     try {
         const body = await req.json();
-        const response = await fetch(`${BACKEND_URL}/api/inventario`, {
+        const response = await fetch(`${BACKEND_URL}/api/inventario/entrada`, {
             method: 'POST',
             headers: await getAuthHeaders(req),
             body: JSON.stringify(body)
