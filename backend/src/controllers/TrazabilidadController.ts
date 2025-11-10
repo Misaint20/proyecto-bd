@@ -238,7 +238,7 @@ export const deleteProcesoProduccion = async (req: Request, res: Response, next:
 export const createControlCalidad = async (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
 
-    if (!data.id_proceso || !data.fecha_analisis || !data.tipo_control || !data.resultados) {
+    if (!data.id_proceso || !data.fecha_analisis || !data.tipo_control) {
         return next(new HttpError('Faltan campos obligatorios para Control de Calidad.', 400));
     }
 

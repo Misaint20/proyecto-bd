@@ -7,7 +7,7 @@
     "start": "node dist/server.js",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "prisma:generate": "prisma generate",
-    "prisma:firts-config": "prisma db pull --force",
+    "prisma:first-config": "prisma db pull --force",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "build": "tsc"

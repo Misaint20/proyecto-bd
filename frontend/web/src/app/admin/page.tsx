@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Users, TrendingUp, Package, UserPlus, FileText, Settings, BarChart3, Activity } from "lucide-react"
+import { Users, TrendingUp, Package, UserPlus, FileText, Settings, Wine, Activity, BarChart3 } from "lucide-react"
 import Link from "next/link"
 import { getUsers } from "@/services/UsersService"
 import { getInventario } from "@/services/InventoryService"
@@ -39,132 +39,181 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="mb-8 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 p-8 rounded-2xl shadow-lg">
-        <div className="flex items-center gap-3">
-          <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-            <Users className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-4 md:p-6">
+      <div className="mb-6 md:mb-8 bg-gradient-to-r from-primary via-primary to-[oklch(0.4_0.14_20)] p-6 md:p-8 rounded-2xl shadow-xl border border-primary/20 animate-fade-in">
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className="bg-primary-foreground/15 p-2 md:p-3 rounded-xl backdrop-blur-sm">
+            <Users className="w-6 h-6 md:w-8 md:h-8 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-4xl font-bold text-white">Panel de Administración</h1>
-            <p className="text-white/90 mt-1">Gestiona tu sistema de manera eficiente</p>
+            <h1 className="text-2xl md:text-4xl font-bold text-primary-foreground">Panel de Administración</h1>
+            <p className="text-sm md:text-base text-primary-foreground/90 mt-1">
+              Gestiona tu bodega de manera integral
+            </p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 group">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="bg-card p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-border group animate-fade-in">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-white/90">Total Usuarios</h3>
-              <p className="text-4xl font-bold text-white mt-2">{totalUsers}</p>
-              <p className="text-white/80 text-sm mt-1">Activos en el sistema</p>
+              <h3 className="text-xs md:text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                Total Usuarios
+              </h3>
+              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-primary to-[oklch(0.4_0.14_20)] bg-clip-text text-transparent mt-2">
+                {totalUsers}
+              </p>
+              <p className="text-xs md:text-sm text-muted-foreground mt-1">Activos en el sistema</p>
             </div>
-            <Users className="w-12 h-12 text-white/30 group-hover:text-white/50 transition-colors" />
+            <div className="p-3 md:p-4 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-all duration-300">
+              <Users className="w-8 h-8 md:w-10 md:h-10 text-primary" />
+            </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 group">
+        <div
+          className="bg-card p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-border group animate-fade-in"
+          style={{ animationDelay: "0.1s" }}
+        >
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-white/90">Ventas del Mes</h3>
-              <p className="text-4xl font-bold text-white mt-2">$45,230</p>
-              <p className="text-white/80 text-sm mt-1">+12% vs mes anterior</p>
+              <h3 className="text-xs md:text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                Ventas del Mes
+              </h3>
+              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-accent to-[oklch(0.78_0.13_80)] bg-clip-text text-transparent mt-2">
+                $45,230
+              </p>
+              <p className="text-xs md:text-sm text-muted-foreground mt-1">+12% vs mes anterior</p>
             </div>
-            <TrendingUp className="w-12 h-12 text-white/30 group-hover:text-white/50 transition-colors" />
+            <div className="p-3 md:p-4 rounded-xl bg-accent/15 group-hover:bg-accent/25 transition-all duration-300">
+              <TrendingUp className="w-8 h-8 md:w-10 md:h-10 text-accent-foreground" />
+            </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 group">
+        <div
+          className="bg-card p-5 md:p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-border group animate-fade-in sm:col-span-2 lg:col-span-1"
+          style={{ animationDelay: "0.2s" }}
+        >
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-white/90">Inventario</h3>
-              <p className="text-4xl font-bold text-white mt-2">{inventario.reduce((acc, inv) => acc + inv.Lote.cantidad_botellas, 0)}</p>
-              <p className="text-white/80 text-sm mt-1">Productos en stock</p>
+              <h3 className="text-xs md:text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                Inventario
+              </h3>
+              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-secondary to-[oklch(0.8_0.1_80)] bg-clip-text text-transparent mt-2">
+                {inventario.reduce((acc, inv) => acc + inv.Lote.cantidad_botellas, 0)}
+              </p>
+              <p className="text-xs md:text-sm text-muted-foreground mt-1">Botellas en stock</p>
             </div>
-            <Package className="w-12 h-12 text-white/30 group-hover:text-white/50 transition-colors" />
+            <div className="p-3 md:p-4 rounded-xl bg-secondary/20 group-hover:bg-secondary/30 transition-all duration-300">
+              <Wine className="w-8 h-8 md:w-10 md:h-10 text-secondary-foreground" />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-card p-6 rounded-xl shadow-lg border border-border hover:shadow-xl transition-shadow">
-          <h3 className="text-2xl font-bold mb-6 text-card-foreground flex items-center gap-2">
-            <Users className="w-6 h-6 text-blue-500" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
+        <div className="bg-card p-5 md:p-6 rounded-2xl shadow-lg border border-border hover:shadow-xl transition-all duration-300 animate-slide-in">
+          <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-card-foreground flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Users className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+            </div>
             Gestión de Usuarios
           </h3>
           <div className="space-y-3">
             <Link
               href="/admin/users"
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
-              <Users className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              className="block w-full bg-gradient-to-r from-primary to-[oklch(0.38_0.13_18)] text-primary-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group"
+            >
+              <Users className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform" />
               Ver todos los usuarios
             </Link>
             <Link
               href="/admin/users/new"
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-4 rounded-xl hover:from-green-600 hover:to-green-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
-              <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              className="block w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border"
+            >
+              <UserPlus className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-primary" />
               Crear nuevo usuario
             </Link>
-            <button className="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white px-6 py-4 rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
-              <FileText className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            <button className="w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border">
+              <FileText className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-accent-foreground" />
               Reportes de usuarios
             </button>
           </div>
         </div>
 
-        <div className="bg-card p-6 rounded-xl shadow-lg border border-border hover:shadow-xl transition-shadow">
-          <h3 className="text-2xl font-bold mb-6 text-card-foreground flex items-center gap-2">
-            <Settings className="w-6 h-6 text-purple-500" />
+        <div
+          className="bg-card p-5 md:p-6 rounded-2xl shadow-lg border border-border hover:shadow-xl transition-all duration-300 animate-slide-in"
+          style={{ animationDelay: "0.1s" }}
+        >
+          <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-card-foreground flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-accent/15">
+              <Settings className="w-5 h-5 md:w-6 md:h-6 text-accent-foreground" />
+            </div>
             Configuración del Sistema
           </h3>
           <div className="space-y-3">
-            <Link
-              href="/admin/settings"
-              className="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-4 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all font-medium text-left flex items-center gap-3 group shadow-md hover:shadow-lg">
-              <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+            <button className="w-full bg-gradient-to-r from-accent to-[oklch(0.75_0.12_82)] text-accent-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group">
+              <Settings className="w-4 h-4 md:w-5 md:h-5 group-hover:rotate-90 transition-transform duration-500" />
               Configuración general
+            </button>
+            <Link
+              href="/admin/inventory"
+              className="block w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border"
+            >
+              <Package className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-primary" />
+              Gestión de Inventario
             </Link>
+            <Link
+              href="/admin/vinos"
+              className="block w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border"
+            >
+              <Wine className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-primary" />
+              Catálogo de Vinos
+            </Link>
+            <Link
+            href="/admin/ventas"
+            className="block w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border"
+            >
+              <BarChart3 className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-primary" />
+            Ventas
+          </Link>
+          <Link
+            href="/admin/traceability"
+            className="block w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border"
+            >
+              <Activity className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-primary" />
+            Trazabilidad
+          </Link>
           </div>
         </div>
       </div>
 
-      <div className="mt-6 bg-card p-6 border border-border rounded-xl shadow-lg">
-        <h3 className="text-xl font-bold mb-4 text-card-foreground flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-amber-500" />
-          Acceso Rápido
-        </h3>
-        <div className="flex gap-3 flex-wrap">
-          <Link
-            href="/admin/ventas"
-            className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
-            Ventas
-          </Link>
-          <Link
-            href="/admin/vinos"
-            className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
-            Vinos
-          </Link>
-          <Link
-            href="/admin/inventory"
-            className="bg-gradient-to-r from-amber-400 to-amber-500 dark:from-amber-600 dark:to-amber-700 text-white px-6 py-3 rounded-lg hover:from-amber-500 hover:to-amber-600 dark:hover:from-amber-700 dark:hover:to-amber-800 transition-all font-medium shadow-md hover:shadow-lg hover:scale-105">
-            Inventario
-          </Link>
-        </div>
-      </div>
-
-      <div className="mt-6 bg-card p-6 rounded-xl shadow-lg border border-border">
-        <h3 className="text-2xl font-bold mb-6 text-card-foreground flex items-center gap-2">
-          <Activity className="w-6 h-6 text-blue-500" />
+      <div
+        className="bg-card p-5 md:p-6 rounded-2xl shadow-lg border border-border animate-fade-in"
+        style={{ animationDelay: "0.3s" }}
+      >
+        <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-card-foreground flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Activity className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+          </div>
           Actividad Reciente
         </h3>
         <div className="space-y-3">
-          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-lg border border-blue-200 dark:border-blue-700 hover:shadow-md transition-shadow">
+          <div className="flex items-center justify-between p-4 bg-muted/50 hover:bg-muted rounded-xl border border-border hover:shadow-md transition-all duration-300">
             <div className="flex items-center gap-3">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className="font-medium text-blue-700 dark:text-blue-300">Nuevo vino agregado</span>
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+              <span className="font-medium text-sm md:text-base text-foreground">Nuevo vino agregado al catálogo</span>
             </div>
-            <span className="text-sm text-muted-foreground">Hace 1 día</span>
+            <span className="text-xs md:text-sm text-muted-foreground">Hace 2h</span>
+          </div>
+          <div className="flex items-center justify-between p-4 bg-muted/50 hover:bg-muted rounded-xl border border-border hover:shadow-md transition-all duration-300">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-accent-foreground rounded-full"></div>
+              <span className="font-medium text-sm md:text-base text-foreground">Usuario registrado en el sistema</span>
+            </div>
+            <span className="text-xs md:text-sm text-muted-foreground">Hace 5h</span>
           </div>
         </div>
       </div>

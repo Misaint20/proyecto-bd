@@ -55,10 +55,10 @@ model Detalle_Venta {
 }
 
 model Inventario {
-  id_inventario     String               @id @db.VarChar(36)
-  id_lote           String               @db.VarChar(36)
-  ubicacion         Inventario_ubicacion
-  Lote              Lote                 @relation(fields: [id_lote], references: [id_lote], onDelete: NoAction, onUpdate: NoAction, map: "Inventario_ibfk_1")
+  id_inventario String               @id @db.VarChar(36)
+  id_lote       String               @db.VarChar(36)
+  ubicacion     Inventario_ubicacion
+  Lote          Lote                 @relation(fields: [id_lote], references: [id_lote], onDelete: NoAction, onUpdate: NoAction, map: "Inventario_ibfk_1")
 
   @@index([id_lote], map: "id_lote")
 }
@@ -183,13 +183,6 @@ enum Barrica_tipo_madera {
   Mixto
 }
 
-enum Vino_tipo {
-  Tinto
-  Blanco
-  Rosado
-  Espumoso
-}
-
 enum Inventario_ubicacion {
   Barricas
   Oficina
@@ -197,7 +190,17 @@ enum Inventario_ubicacion {
   Produccion
 }
 
+enum Vino_tipo {
+  Tinto
+  Blanco
+  Rosado
+  Espumoso
+}
+
 enum Control_Calidad_tipo_control {
-  Analisis
+  Microbiologico
+  Fisicoquimico
+  Sensorial
+  Visual
   Cata
 }

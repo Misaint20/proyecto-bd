@@ -1,13 +1,16 @@
 import { ROLE_ROUTE_MAP, UserRole } from '@/types/auth'; 
 interface LoginResult {
     success: boolean;
-    role?: UserRole;
+    user?: {
+        nombre: string;
+        role: UserRole;
+    }
     errorMessage?: string;
 }
 
 export async function login(username: string, password: string): Promise<LoginResult> {
     // Llamamos a nuestro API Route de Next.js que actúa como proxy
-    const res = await fetch('/api/login', {
+    const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -16,10 +19,11 @@ export async function login(username: string, password: string): Promise<LoginRe
     const data = await res.json();
 
     if (res.ok) {
-        const role = data.role as UserRole;
+        localStorage.setItem("user", JSON.stringify(data.user));
+
         return {
             success: true,
-            role: role
+            user: data.user
         };
     } else {
         // El backend devolvió un error (ej: credenciales incorrectas, status 401)

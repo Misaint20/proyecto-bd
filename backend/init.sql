@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS Inventario (
 CREATE TABLE IF NOT EXISTS Venta (
     id_venta VARCHAR(36) PRIMARY KEY,
     fecha_venta DATE NOT NULL,
-    cliente VARCHAR(200) NOT NULL
+    cliente VARCHAR(200) NOT NULL,
     total DECIMAL(10, 2) NOT NULL
 );
 
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS Control_Calidad (
     id_control VARCHAR(36) PRIMARY KEY,
     id_proceso VARCHAR(36) NOT NULL,
     fecha_analisis DATE NOT NULL,
-    tipo_control ENUM('Analisis', 'Cata') NOT NULL,
+    tipo_control ENUM('Microbiologico', 'Fisicoquimico', 'Sensorial', 'Visual', 'Cata') NOT NULL,
     resultados TEXT,
     FOREIGN KEY (id_proceso) REFERENCES Proceso_Produccion(id_proceso)
 );

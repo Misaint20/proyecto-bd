@@ -1,4 +1,4 @@
-import { jwtVerify, JWTPayload, decodeProtectedHeader } from 'jose';
+import { jwtVerify, JWTPayload } from 'jose';
 import { UserRole } from '@/types/auth';
 
 // Define la estructura del payload del JWT que esperas

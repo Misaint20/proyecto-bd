@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { serialize } from 'cookie';
-import { LoginResponse } from '@/types/auth'; 
+import { LoginResponse } from '@/types/auth';
 
 // URL de tu backend local
-const BACKEND_LOGIN_URL = `${process.env.BACKEND_URL}/api/auth/login`; 
+const BACKEND_LOGIN_URL = `${process.env.BACKEND_URL}/api/auth/login`;
 
 export async function POST(req: NextRequest) {
     try {
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         // Access Token (HttpOnly para máxima seguridad)
         const serializedToken = serialize('access_token', access_token, {
             httpOnly: true, // NO accesible por JavaScript en el navegador
-            secure: process.env.NODE_ENV === 'production' , // Solo en HTTPS en producción
+            secure: process.env.NODE_ENV === 'production', // Solo en HTTPS en producción
             sameSite: 'strict', // Protección contra CSRF
             maxAge: 60 * 60 * 24, // 24 horas (ajusta según tu necesidad)
             path: '/',
@@ -47,8 +47,10 @@ export async function POST(req: NextRequest) {
             path: '/',
         });
 
+
+
         // 3. Devolver respuesta con las cookies configuradas
-        const response = NextResponse.json({ message: 'Autenticación exitosa', role: user_info.role }, { status: 200 });
+        const response = NextResponse.json({ message: 'Autenticación exitosa', user: {nombre: user_info.username, role: user_info.role} }, { status: 200 });
         response.headers.set('Set-Cookie', serializedToken);
         response.headers.append('Set-Cookie', serializedRole); // Agregar la segunda cookie
 

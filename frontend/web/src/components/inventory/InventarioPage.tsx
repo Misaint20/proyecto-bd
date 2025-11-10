@@ -126,12 +126,11 @@ export default function InventoryPage() {
     ]
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white shadow-lg">
-                <div className="container mx-auto px-6 py-8">
+        <div className="min-h-screen bg-background">
+            <div className="bg-gradient-to-r from-primary via-[oklch(0.4_0.1_20)] to-[oklch(0.38_0.1_25)] text-primary-foreground shadow-lg border-b border-border">
+                <div className="container mx-auto px-6 py-8 flex flex-col">
                     <Link href="/admin">
-                        <Button variant="ghost" className="text-white hover:bg-white/20 mb-4">
+                        <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/20 mb-4">
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Volver al Panel
                         </Button>
@@ -142,69 +141,79 @@ export default function InventoryPage() {
                                 <Package className="h-10 w-10" />
                                 Gestión de Inventario
                             </h1>
-                            <p className="text-green-100 text-lg">Administra viñedos, varietales, barricas e inventario</p>
+                            <p className="text-primary-foreground/80 text-lg">
+                                Administra viñedos, varietales, barricas e inventario
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div className="container mx-auto px-6 py-8">
-                {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-                    <Card className="p-6 bg-gradient-to-br from-green-500 to-emerald-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <Card className="p-6 bg-card hover:shadow-lg transition-all duration-300 border-2 border-border hover:border-primary/30">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-green-100 text-sm font-medium">Viñedos</p>
-                                <p className="text-3xl font-bold mt-1">{vinedos.length}</p>
+                                <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">Viñedos</p>
+                                <p className="text-3xl font-bold mt-1 text-foreground">{vinedos.length}</p>
                             </div>
-                            <Grape className="h-12 w-12 opacity-80" />
+                            <div className="p-3 rounded-lg bg-primary/10">
+                                <Grape className="h-8 w-8 text-primary" />
+                            </div>
                         </div>
                     </Card>
 
-                    <Card className="p-6 bg-gradient-to-br from-purple-500 to-pink-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <Card className="p-6 bg-card hover:shadow-lg transition-all duration-300 border-2 border-border hover:border-primary/30">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-purple-100 text-sm font-medium">Varietales</p>
-                                <p className="text-3xl font-bold mt-1">{varietales.length}</p>
+                                <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">Varietales</p>
+                                <p className="text-3xl font-bold mt-1 text-foreground">{varietales.length}</p>
                             </div>
-                            <Wine className="h-12 w-12 opacity-80" />
+                            <div className="p-3 rounded-lg bg-accent/20">
+                                <Wine className="h-8 w-8 text-accent-foreground" />
+                            </div>
                         </div>
                     </Card>
 
-                    <Card className="p-6 bg-gradient-to-br from-amber-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <Card className="p-6 bg-card hover:shadow-lg transition-all duration-300 border-2 border-border hover:border-primary/30">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-amber-100 text-sm font-medium">Barricas</p>
-                                <p className="text-3xl font-bold mt-1">{barricas.length}</p>
+                                <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">Barricas</p>
+                                <p className="text-3xl font-bold mt-1 text-foreground">{barricas.length}</p>
                             </div>
-                            <Warehouse className="h-12 w-12 opacity-80" />
+                            <div className="p-3 rounded-lg bg-secondary/50">
+                                <Warehouse className="h-8 w-8 text-secondary-foreground" />
+                            </div>
                         </div>
                     </Card>
 
-                    <Card className="p-6 bg-gradient-to-br from-blue-500 to-cyan-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <Card className="p-6 bg-card hover:shadow-lg transition-all duration-300 border-2 border-border hover:border-primary/30">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-blue-100 text-sm font-medium">Total Botellas</p>
-                                <p className="text-3xl font-bold mt-1">
+                                <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">Total Botellas</p>
+                                <p className="text-3xl font-bold mt-1 text-foreground">
                                     {inventarios.reduce((acc, inv) => acc + inv.Lote.cantidad_botellas, 0)}
                                 </p>
                             </div>
-                            <Package className="h-12 w-12 opacity-80" />
+                            <div className="p-3 rounded-lg bg-primary/10">
+                                <Package className="h-8 w-8 text-primary" />
+                            </div>
                         </div>
                     </Card>
 
-                    <Card className="p-6 bg-gradient-to-br from-rose-500 to-pink-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    <Card className="p-6 bg-card hover:shadow-lg transition-all duration-300 border-2 border-border hover:border-primary/30">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-rose-100 text-sm font-medium">Mezclas</p>
-                                <p className="text-3xl font-bold mt-1">{mezclas.length}</p>
+                                <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">Mezclas</p>
+                                <p className="text-3xl font-bold mt-1 text-foreground">{mezclas.length}</p>
                             </div>
-                            <Droplets className="h-12 w-12 opacity-80" />
+                            <div className="p-3 rounded-lg bg-accent/20">
+                                <Droplets className="h-8 w-8 text-accent-foreground" />
+                            </div>
                         </div>
                     </Card>
                 </div>
 
-                {/* Tabs */}
                 <div className="flex flex-wrap gap-2 mb-6">
                     {tabs.map((tab) => {
                         const Icon = tab.icon
@@ -212,14 +221,14 @@ export default function InventoryPage() {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 ${activeTab === tab.id
-                                    ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg scale-105"
-                                    : "bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 border-2 ${activeTab === tab.id
+                                    ? "bg-primary text-primary-foreground border-primary shadow-md"
+                                    : "bg-card text-muted-foreground hover:bg-secondary hover:text-secondary-foreground border-border"
                                     }`}
                             >
                                 <Icon className="h-5 w-5" />
                                 {tab.label}
-                                <Badge variant="secondary" className="ml-2">
+                                <Badge variant={activeTab === tab.id ? "secondary" : "outline"} className="ml-2">
                                     {tab.count}
                                 </Badge>
                             </button>
@@ -227,8 +236,7 @@ export default function InventoryPage() {
                     })}
                 </div>
 
-                {/* Search and Create */}
-                <Card className="p-6 mb-6 bg-card/50 backdrop-blur border-border/50">
+                <Card className="p-6 mb-6 bg-card border-2 border-border">
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="relative flex-1 w-full">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -236,12 +244,12 @@ export default function InventoryPage() {
                                 placeholder={`Buscar ${activeTab}...`}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 bg-background border-border focus:border-green-500 focus:ring-green-500"
+                                className="pl-10 bg-background border-2 border-input focus:border-primary"
                             />
                         </div>
                         <Button
                             onClick={() => handleCreate(activeTab)}
-                            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 w-full md:w-auto"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300 w-full md:w-auto"
                         >
                             <Plus className="mr-2 h-5 w-5" />
                             Crear{" "}
@@ -258,13 +266,12 @@ export default function InventoryPage() {
                     </div>
                 </Card>
 
-                {/* Content Tables */}
-                <Card className="overflow-hidden border-border/50 shadow-lg">
+                <Card className="overflow-hidden border-2 border-border shadow-md">
                     {/* Viñedos Table */}
                     {activeTab === "vinedos" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+                                <thead className="bg-primary text-primary-foreground">
                                     <tr>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Nombre</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Ubicación</th>
@@ -273,12 +280,12 @@ export default function InventoryPage() {
                                         <th className="px-6 py-4 text-right text-sm font-semibold">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-border">
+                                <tbody className="divide-y divide-border bg-card">
                                     {vinedos.map((vinedo, index) => (
                                         <tr key={vinedo.id_vinedo} className="hover:bg-accent/50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <Grape className="h-5 w-5 text-green-600" />
+                                                    <Grape className="h-5 w-5 text-primary" />
                                                     <span className="font-medium text-foreground">{vinedo.nombre}</span>
                                                 </div>
                                             </td>
@@ -330,19 +337,19 @@ export default function InventoryPage() {
                     {activeTab === "varietales" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                                <thead className="bg-accent text-accent-foreground">
                                     <tr>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Nombre</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Descripción</th>
                                         <th className="px-6 py-4 text-right text-sm font-semibold">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-border">
+                                <tbody className="divide-y divide-border bg-card">
                                     {varietales.map((varietal) => (
                                         <tr key={varietal.id_varietal} className="hover:bg-accent/50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <Wine className="h-5 w-5 text-purple-600" />
+                                                    <Wine className="h-5 w-5 text-accent-foreground" />
                                                     <span className="font-medium text-foreground">{varietal.nombre}</span>
                                                 </div>
                                             </td>
@@ -377,7 +384,7 @@ export default function InventoryPage() {
                     {activeTab === "barricas" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gradient-to-r from-amber-600 to-orange-600 text-white">
+                                <thead className="bg-secondary text-secondary-foreground">
                                     <tr>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Tipo de Madera</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Capacidad</th>
@@ -386,12 +393,12 @@ export default function InventoryPage() {
                                         <th className="px-6 py-4 text-right text-sm font-semibold">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-border">
+                                <tbody className="divide-y divide-border bg-card">
                                     {barricas.map((barrica) => (
                                         <tr key={barrica.id_barrica} className="hover:bg-accent/50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <Warehouse className="h-5 w-5 text-amber-600" />
+                                                    <Warehouse className="h-5 w-5 text-secondary-foreground" />
                                                     <span className="font-medium text-foreground">{barrica.tipo_madera}</span>
                                                 </div>
                                             </td>
@@ -409,7 +416,7 @@ export default function InventoryPage() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <DollarSign className="h-4 w-4" />{barrica.costo}
+                                                    <DollarSign className="h-4 w-4" />${barrica.costo}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -442,7 +449,7 @@ export default function InventoryPage() {
                     {activeTab === "inventario" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
+                                <thead className="bg-primary text-primary-foreground">
                                     <tr>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Número de Lote</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Ubicación</th>
@@ -450,7 +457,7 @@ export default function InventoryPage() {
                                         <th className="px-6 py-4 text-right text-sm font-semibold">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-border">
+                                <tbody className="divide-y divide-border bg-card">
                                     {inventarios.map((inventario) => (
                                         <tr key={inventario.id_inventario} className="hover:bg-accent/50 transition-colors">
                                             <td className="px-6 py-4">
@@ -460,14 +467,14 @@ export default function InventoryPage() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <MapPin className="h-5 w-5 text-blue-600" />
+                                                    <MapPin className="h-5 w-5 text-primary" />
                                                     <span className="font-medium text-foreground">{inventario.ubicacion}</span>
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
                                                     <Package className="h-5 w-5 text-muted-foreground" />
-                                                    <span className="font-semibold text-foreground">{inventario.Lote.cantidad_botellas}</span>
+                                                    <span className="font-semibold text-foreground">{inventario.cantidad_botellas}</span>
                                                     <span className="text-muted-foreground text-sm">botellas</span>
                                                 </div>
                                             </td>
@@ -484,7 +491,6 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => handleDelete(inventario.id_inventario)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -502,7 +508,7 @@ export default function InventoryPage() {
                     {activeTab === "mezclas" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                                <thead className="bg-accent text-accent-foreground">
                                     <tr>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Vino</th>
                                         <th className="px-6 py-4 text-left text-sm font-semibold">Varietal</th>
@@ -510,7 +516,7 @@ export default function InventoryPage() {
                                         <th className="px-6 py-4 text-right text-sm font-semibold">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-border">
+                                <tbody className="divide-y divide-border bg-card">
                                     {mezclas.map((mezcla) => (
                                         <tr key={mezcla.id_mezcla} className="hover:bg-accent/50 transition-colors">
                                             <td className="px-6 py-4">
@@ -525,7 +531,7 @@ export default function InventoryPage() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <Droplets className="h-5 w-5 text-purple-600" />
+                                                    <Droplets className="h-5 w-5 text-accent-foreground" />
                                                     <span className="font-semibold text-foreground">{mezcla.porcentaje}%</span>
                                                 </div>
                                             </td>

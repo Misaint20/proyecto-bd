@@ -17,8 +17,8 @@ export default function LoginForm() {
 
     if (username && password) {
       login(username, password).then(result => {
-        if (result.success && result.role) {
-          router.push(getDashboardPath(result.role))
+        if (result.success && result.user?.role) {
+          router.push(getDashboardPath(result.user.role))
         } else {
           alert(result.errorMessage)
         }

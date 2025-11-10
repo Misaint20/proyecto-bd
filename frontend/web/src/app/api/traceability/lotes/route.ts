@@ -21,3 +21,24 @@ export const GET = async (req: NextRequest) => {
         return NextResponse.json({ message: 'Error al obtener lotes' }, { status: 500 });
     }
 };
+
+export const POST = async (req: NextRequest) => {
+    try {
+        const body = await req.json();
+        const response = await fetch(`${BACKEND_URL}/api/trazabilidad/lotes`, {
+            method: 'POST',
+            headers: await getAuthHeaders(req),
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            return NextResponse.json({ message: 'Error al crear lote' }, { status: response.status });
+        }
+
+        const data = await response.json();
+
+        return NextResponse.json(data);
+    } catch (error) {
+        return NextResponse.json({ message: 'Error al crear lote' }, { status: 500 });
+    }
+};

@@ -42,7 +42,7 @@ const getInternalRoleKey = (apiRoleName: string): string => {
             return "admin";
         case "Encargado_de_Bodega":
             return "bodeguero";
-        case "Enologo":
+        case "Enologo_Productor":
             return "enologo";
         case "Vendedor":
             return "vendedor";
@@ -138,9 +138,9 @@ export default function UsersPage() {
         <div className="min-h-screen bg-background p-6">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="mb-8 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 p-8 rounded-2xl shadow-lg">
+                <div className="mb-8 bg-gradient-to-r from-stone-700 via-stone-600 to-stone-700 dark:from-stone-800 dark:via-stone-700 dark:to-stone-800 p-8 rounded-2xl shadow-lg border border-stone-200 dark:border-stone-700">
                     <Link
-                        href="/admin/"
+                        href="/admin"
                         className="inline-flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors group"
                     >
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -148,30 +148,23 @@ export default function UsersPage() {
                     </Link>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
+                            <div className="bg-white/15 p-3 rounded-xl backdrop-blur-sm">
                                 <Users className="w-8 h-8 text-white" />
                             </div>
                             <div>
                                 <h1 className="text-4xl font-bold text-white">Gestión de Usuarios</h1>
-                                <p className="text-white/90 mt-1">Administra todos los usuarios del sistema</p>
+                                <p className="text-white/85 mt-1">Administra todos los usuarios del sistema</p>
                             </div>
                         </div>
                         <Link
                             href="/admin/users/new"
-                            className="bg-white text-blue-600 px-6 py-3 rounded-xl hover:bg-blue-50 transition-all font-medium shadow-md hover:shadow-lg flex items-center gap-2 group"
+                            className="bg-white text-stone-700 px-6 py-3 rounded-xl hover:bg-stone-50 transition-all font-medium shadow-md hover:shadow-lg flex items-center gap-2 group"
                         >
                             <UserPlus className="w-5 h-5 group-hover:scale-110 transition-transform" />
                             Nuevo Usuario
                         </Link>
                     </div>
                 </div>
-
-                {/* Mensaje de Error */}
-                {error && (
-                    <div className="bg-red-500/20 border border-red-500 text-red-700 dark:bg-red-900/30 dark:text-red-400 p-4 rounded-lg mb-6" role="alert">
-                        {error}
-                    </div>
-                )}
 
                 {/* Search Bar */}
                 <div className="mb-6 bg-card p-4 rounded-xl shadow-lg border border-border">
@@ -189,105 +182,96 @@ export default function UsersPage() {
 
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-xl shadow-lg">
-                        <div className="text-white/90 text-sm font-medium">Total Usuarios</div>
-                        <div className="text-3xl font-bold text-white mt-1">{stats.total}</div>
+                    <div className="bg-gradient-to-br from-stone-600 to-stone-700 dark:from-stone-700 dark:to-stone-800 p-4 rounded-xl shadow-lg border border-stone-200 dark:border-stone-700">
+                        <div className="text-white/85 text-sm font-medium">Total Usuarios</div>
+                        <div className="text-3xl font-bold text-white mt-1">{users.length}</div>
                     </div>
-                    <div className="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-xl shadow-lg">
-                        <div className="text-white/90 text-sm font-medium">Activos</div>
+                    <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 dark:from-emerald-700 dark:to-emerald-800 p-4 rounded-xl shadow-lg border border-emerald-200 dark:border-emerald-700">
+                        <div className="text-white/85 text-sm font-medium">Activos</div>
                         <div className="text-3xl font-bold text-white mt-1">
-                            {stats.active}
+                            {users.filter((u) => u.status === "active").length}
                         </div>
                     </div>
-                    <div className="bg-gradient-to-br from-amber-500 to-amber-600 p-4 rounded-xl shadow-lg">
-                        <div className="text-white/90 text-sm font-medium">Administradores</div>
-                        <div className="text-3xl font-bold text-white mt-1">{stats.admin}</div>
+                    <div className="bg-gradient-to-br from-amber-600 to-amber-700 dark:from-amber-700 dark:to-amber-800 p-4 rounded-xl shadow-lg border border-amber-200 dark:border-amber-700">
+                        <div className="text-white/85 text-sm font-medium">Administradores</div>
+                        <div className="text-3xl font-bold text-white mt-1">{users.filter((u) => u.role === "admin").length}</div>
                     </div>
-                    <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-xl shadow-lg">
-                        <div className="text-white/90 text-sm font-medium">Otros Roles</div>
-                        <div className="text-3xl font-bold text-white mt-1">{stats.other}</div>
+                    <div className="bg-gradient-to-br from-rose-600 to-rose-700 dark:from-rose-700 dark:to-rose-800 p-4 rounded-xl shadow-lg border border-rose-200 dark:border-rose-700">
+                        <div className="text-white/85 text-sm font-medium">Otros Roles</div>
+                        <div className="text-3xl font-bold text-white mt-1">{users.filter((u) => u.role !== "admin").length}</div>
                     </div>
                 </div>
 
                 {/* Users Table */}
                 <div className="bg-card rounded-xl shadow-lg border border-border overflow-hidden">
-                    {isLoading ? (
-                        <div className="text-center py-12 flex flex-col items-center justify-center">
-                            <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-3" />
-                            <p className="text-muted-foreground">Cargando usuarios...</p>
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-muted">
-                                    <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Usuario</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Rol</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Email</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Estado</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Fecha Creación</th>
-                                        <th className="px-6 py-4 text-right text-sm font-semibold text-foreground">Acciones</th>
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-muted">
+                                <tr>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Usuario</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Rol</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Email</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Estado</th>
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">Fecha Creación</th>
+                                    <th className="px-6 py-4 text-right text-sm font-semibold text-foreground">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-border">
+                                {filteredUsers.map((user) => (
+                                    <tr key={user.id} className="hover:bg-muted/50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div
+                                                    className={`w-10 h-10 rounded-full bg-gradient-to-br ${getRoleColor(user.role)} flex items-center justify-center`}
+                                                >
+                                                    <User className="w-5 h-5 text-white" />
+                                                </div>
+                                                <div>
+                                                    <div className="font-medium text-foreground">{user.name}</div>
+                                                    <div className="text-sm text-muted-foreground">@{user.username}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span
+                                                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r ${getRoleColor(user.role)} text-white`}
+                                            >
+                                                <Shield className="w-3 h-3" />
+                                                {user.roleName}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-muted-foreground">{user.email}</td>
+                                        <td className="px-6 py-4">
+                                            <span
+                                                className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${user.status === "active"
+                                                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                                    : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
+                                                    }`}
+                                            >
+                                                {user.status === "active" ? "Activo" : "Inactivo"}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-muted-foreground">{user.createdAt}</td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button className="p-2 text-stone-600 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 rounded-lg transition-colors">
+                                                    <Edit className="w-4 h-4" />
+                                                </button>
+                                                <button className="p-2 text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/30 rounded-lg transition-colors">
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border">
-                                    {filteredUsers.map((user) => (
-                                        <tr key={user.id} className="hover:bg-muted/50 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div
-                                                        className={`w-10 h-10 rounded-full bg-gradient-to-br ${getRoleColor(user.role)} flex items-center justify-center`}
-                                                    >
-                                                        <User className="w-5 h-5 text-white" />
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-medium text-foreground">{user.name}</div>
-                                                        <div className="text-sm text-muted-foreground">@{user.username}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span
-                                                    className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r ${getRoleColor(user.role)} text-white`}
-                                                >
-                                                    <Shield className="w-3 h-3" />
-                                                    {user.roleName}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-muted-foreground">{user.email}</td>
-                                            <td className="px-6 py-4">
-                                                <span
-                                                    className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${user.status === "active"
-                                                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                                                        : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
-                                                        }`}
-                                                >
-                                                    {user.status === "active" ? "Activo" : "Inactivo"}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-muted-foreground">{user.createdAt}</td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <button className="p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors">
-                                                        <Edit className="w-4 h-4" />
-                                                    </button>
-                                                    <button className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors">
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    {filteredUsers.length === 0 && !isLoading && (
+                    {filteredUsers.length === 0 && (
                         <div className="text-center py-12">
                             <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                            <p className="text-muted-foreground">
-                                {users.length === 0 ? "No se encontraron usuarios en el sistema." : "No se encontraron usuarios que coincidan con la búsqueda."}
-                            </p>
+                            <p className="text-muted-foreground">No se encontraron usuarios</p>
                         </div>
                     )}
                 </div>
