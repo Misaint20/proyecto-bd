@@ -320,6 +320,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
+                                                        onClick={() => handleDelete(vinedo.id_vinedo)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -367,6 +368,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
+                                                        onClick={() => handleDelete(varietal.id_varietal)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -432,6 +434,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
+                                                        onClick={() => handleDelete(barrica.id_barrica)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -491,6 +494,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
+                                                        onClick={() => handleDelete(inventario.id_inventario)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -548,6 +552,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
+                                                        onClick={() => handleDelete(mezcla.id_mezcla)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-4 w-4" />

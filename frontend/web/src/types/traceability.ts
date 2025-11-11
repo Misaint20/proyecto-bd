@@ -6,6 +6,8 @@ export interface Lote {
     Vino: {
         id_vino: string;
         nombre: string;
+        precio_botella: string;
+        tipo: string;
     };
     Barrica?: {
         id_barrica: string;

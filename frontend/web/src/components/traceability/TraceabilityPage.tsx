@@ -10,7 +10,7 @@ import CosechaModal from "@/components/traceability/CosechaModal"
 import LoteModal from "@/components/traceability/LoteModal"
 import ProcesoProduccionModal from "@/components/traceability/ProcesoProduccionModal"
 import ControlCalidadModal from "@/components/traceability/ControlCalidadModal"
-import { getLotes, getControlCalidad, getCosechas, getProcesosProduccion } from "@/services/TraceabilityService"
+import { getLotes, getControlCalidad, getCosechas, getProcesosProduccion, deleteControlCalidad, deleteCosecha, deleteLote, deleteProcesoProduccion } from "@/services/TraceabilityService"
 
 
 type TabType = "cosechas" | "lotes" | "procesos" | "controles"
@@ -77,9 +77,23 @@ export default function TraceabilityPageComponent() {
         if (type === "controles") setControlModalOpen(true)
     }
 
-    const handleDelete = async (id: string, type: TabType) => {
+    const handleDelete = async (item: any, type: TabType) => {
         if (confirm("¿Estás seguro de eliminar este registro?")) {
-            console.log("Deleting:", type, id)
+            console.log("Deleting:", type, item)
+            switch (type) {
+                case "cosechas":
+                    await deleteCosecha(item.id_cosecha)
+                    break
+                case "lotes":
+                    await deleteLote(item.id_lote)
+                    break
+                case "procesos":
+                    await deleteProcesoProduccion(item.id_proceso)
+                    break
+                case "controles":
+                    await deleteControlCalidad(item.id_control)
+                    break
+            }
         }
     }
 
@@ -335,7 +349,7 @@ export default function TraceabilityPageComponent() {
                                                     <Button
                                                         variant="ghost"
                                                         size="sm"
-                                                        onClick={() => handleDelete(item.id, activeTab)}
+                                                        onClick={() => handleDelete(item, activeTab)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
