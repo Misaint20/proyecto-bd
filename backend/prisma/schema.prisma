@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
 }
 
 model Barrica {
@@ -170,6 +170,12 @@ model Vino {
   Mezcla_Vino       Mezcla_Vino[]
 }
 
+enum Barrica_tipo_madera {
+  Frances
+  Americano
+  Mixto
+}
+
 enum Rol_nombre {
   Administrador
   Encargado_de_Bodega @map("Encargado de Bodega")
@@ -177,10 +183,11 @@ enum Rol_nombre {
   Vendedor
 }
 
-enum Barrica_tipo_madera {
-  Frances
-  Americano
-  Mixto
+enum Vino_tipo {
+  Tinto
+  Blanco
+  Rosado
+  Espumoso
 }
 
 enum Inventario_ubicacion {
@@ -188,13 +195,6 @@ enum Inventario_ubicacion {
   Oficina
   Almacenamiento
   Produccion
-}
-
-enum Vino_tipo {
-  Tinto
-  Blanco
-  Rosado
-  Espumoso
 }
 
 enum Control_Calidad_tipo_control {

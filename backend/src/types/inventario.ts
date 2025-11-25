@@ -1,4 +1,4 @@
-import { Prisma, Inventario_ubicacion } from '@prisma/client';
+import { Prisma, Inventario_ubicacion } from '../generated/prisma/client';
 
 type CreateInventarioInput = Prisma.InventarioCreateInput;
 

@@ -1,7 +1,7 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from './AuthMiddleware';
 import { HttpError } from './ErrorHandler';
-import { Rol_nombre as RolNombre } from '@prisma/client';
+import { Rol_nombre as RolNombre } from '../generated/prisma/client';
 
 /**
  * Generador de middleware para verificar roles específicos (RBAC).

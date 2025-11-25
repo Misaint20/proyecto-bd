@@ -14,8 +14,8 @@ import { logger } from '../utils/logger';
 export const registerInventoryEntry = async (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
     
-    if (!data.id_lote ||!data.ubicacion ||!data.cantidad_botellas) {
-        return next(new HttpError('Faltan campos obligatorios para Inventario: id_lote, ubicacion, cantidad_botellas.', 400));
+    if (!data.id_lote ||!data.ubicacion) {
+        return next(new HttpError('Faltan campos obligatorios para Inventario: id_lote, ubicacion.', 400));
     }
     
     try {

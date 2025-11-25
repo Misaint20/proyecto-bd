@@ -4,9 +4,9 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { ShoppingCart, Wine, Trash2, Plus, X, User, DollarSign } from "lucide-react"
 import { type NewVentaData, createVenta } from "@/services/VentasService"
-import { getLotes } from "@/services/TraceabilityService"
+import { getInventario } from "@/services/InventoryService"
 import type { ItemCarrito } from "@/types/ventas"
-import type { Lote } from "@/types/traceability"
+import type { Inventario } from "@/types/inventory"
 
 interface VentasModalProps {
     onClose: () => void
@@ -17,7 +17,7 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
     // Estados
     const [cliente, setCliente] = useState("")
     const [carrito, setCarrito] = useState<ItemCarrito[]>([])
-    const [vinosDisponibles, setVinosDisponibles] = useState<Lote[]>([])
+    const [vinosDisponibles, setVinosDisponibles] = useState<Inventario[]>([])
     const [vinoSeleccionado, setVinoSeleccionado] = useState("")
     const [cantidad, setCantidad] = useState(1)
     const [error, setError] = useState("")
@@ -30,10 +30,10 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
 
     // Funcion para obtener la lista de vinos
     const fetchVinosDisponibles = async () => {
-        const result = await getLotes()
+        const result = await getInventario()
 
         if (result && result.success) {
-            setVinosDisponibles(result.data)
+            setVinosDisponibles(result.data.data)
         } else {
             setError("Error al cargar los vinos")
         }
@@ -49,21 +49,21 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
             setError("La cantidad debe ser mayor a 0")
         }
 
-        const vino = vinosDisponibles.find((v) => v.Vino.id_vino === vinoSeleccionado)
-        if (!vino) {
+        const inventario = vinosDisponibles.find((v) => v.Lote.Vino.id_vino === vinoSeleccionado)
+        if (!inventario) {
             setError("Vino no encontrado")
             return
         }
 
-        console.log(vino)
+        console.log(inventario)
 
-        const subtotal = Number(vino.Vino.precio_botella) * cantidad
+        const subtotal = Number(inventario.Lote.Vino.precio_botella) * cantidad
 
         const nuevoItem: ItemCarrito = {
-            id_vino: vino.Vino.id_vino,
-            id_lote: vino.id_lote,
-            nombreVino: vino.Vino.nombre,
-            precio_unitario: Number(vino.Vino.precio_botella),
+            id_vino: inventario.Lote.Vino.id_vino,
+            id_lote: inventario.Lote.id_lote,
+            nombreVino: inventario.Lote.Vino.nombre,
+            precio_unitario: Number(inventario.Lote.Vino.precio_botella),
             cantidad: cantidad,
             subtotal: subtotal,
         }
@@ -176,8 +176,8 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
                                 >
                                     <option value="">Selecciona un vino...</option>
                                     {vinosDisponibles.map((vino) => (
-                                        <option key={vino.Vino.id_vino} value={vino.Vino.id_vino}>
-                                            {vino.Vino.nombre} - {vino.Vino.tipo} - ${vino.Vino.precio_botella}
+                                        <option key={vino.Lote.Vino.id_vino} value={vino.Lote.Vino.id_vino}>
+                                            {vino.Lote.Vino.nombre} - {vino.Lote.Vino.tipo} - ${vino.Lote.Vino.precio_botella}
                                         </option>
                                     ))}
                                 </select>

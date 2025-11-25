@@ -1,5 +1,5 @@
 import prisma from '../lib/PrismaService';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '../generated/prisma/client';
 import { CreateVinoData, UpdateVinoData } from '../types/vino';
 import { generateUuid } from '../lib/IdGenerator'; 
 
@@ -87,7 +87,7 @@ export const updateVino = async (id: string, data: UpdateVinoData)=> {
             data: data,
         });
     } catch (error: any) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             // Error si el registro no existe
             throw new Error('Vino no encontrado para actualizar.');
         }

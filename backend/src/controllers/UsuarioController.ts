@@ -36,7 +36,7 @@ export const getUsuarios = async (req: Request, res: Response, next: NextFunctio
     try {
         const usuarios = await UsuarioService.findAllUsers();
         // Omitir contraseñas antes de enviar
-        const usuariosSeguros = usuarios.map(({ password,...user }) => user); 
+        const usuariosSeguros = usuarios.map(({ password , ...usuario }) => usuario);
         return res.status(200).json({ data: usuariosSeguros });
     } catch (error) {
         next(error);

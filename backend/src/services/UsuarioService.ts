@@ -1,9 +1,9 @@
 import prisma from '../lib/PrismaService';
-import { Usuario, Rol, Rol_nombre } from '@prisma/client';
+import { Usuario, Rol, Rol_nombre } from '../generated/prisma/client';
 import { CreateUsuarioData, UpdateUsuarioData, UserWithRole, AuthenticatedUser } from '../types/usuario';
 import { generateUuid } from '../lib/IdGenerator';
 import { hashPassword, verifyPassword } from '../lib/Password';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '../generated/prisma/client';
 
 
 export const findRoleByName = async (nombre: Rol_nombre): Promise<Rol | null> => {
@@ -51,7 +51,7 @@ export const createUser = async (data: CreateUsuarioData): Promise<Usuario> => {
             data: userData,
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
             throw new Error('El nombre de usuario o email ya está en uso.');
         }
         throw error;

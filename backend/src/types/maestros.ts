@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma } from '../generated/prisma/client';
 
 // Tipos para viñedo
 type VinedoCreateInput = Prisma.VinedoCreateInput;

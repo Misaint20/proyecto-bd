@@ -24,12 +24,11 @@ export interface NewVentaData extends Omit<Venta, "id_venta" | "total"> {}
 
 interface UpdateVentaData extends Partial<NewVentaData> { }
 
-export async function createVenta(data: any) {
+export async function createVenta(data: NewVentaData) {
     try {
         const body = {
             ...data,
         }
-        console.log(body)
         const response = await fetch(API_ROUTE_URL, {
             method: "POST",
             body: JSON.stringify(body),
@@ -55,11 +54,11 @@ export async function createVenta(data: any) {
     }
 }
 
-export async function updateVenta(id: string, data: any) {
+export async function updateVenta(id: string, data: UpdateVentaData) {
     try {
         const body = {
             ...data,
-            Detalle_Venta: data.Detalle_Venta.map((detalle: DetalleVentaItem) => {
+            Detalle_Venta: data.detalles?.map((detalle: DetalleVentaItem) => {
                 return {
                     id_vino: detalle.id_vino,
                     id_lote: detalle.id_lote,

@@ -3,7 +3,7 @@ import { Router } from 'express';
 import * as VentasController from '../controllers/VentasController';
 import { authenticateJWT } from '../middlewares/AuthMiddleware';
 import { authorizeRoles } from '../middlewares/RoleMiddleware';
-import { Rol_nombre as RolNombre } from '@prisma/client';
+import { Rol_nombre as RolNombre } from '../generated/prisma/client';
 
 const router = Router();
 

@@ -68,14 +68,12 @@ export default function InventoryPage() {
                 setter([]);
             }
         } catch (error) {
-            // Captura errores de red o errores lanzados por apiCall antes del manejo de la respuesta 'result'
             console.error(`Error inesperado al intentar obtener ${dataName}:`, error);
             setter([]);
         }
     };
 
     useEffect(() => {
-        // Llama a la función genérica con la función de API y la función de estado correspondiente.
         fetchData(getVinedos, setVinedos, "Viñedos");
         fetchData(getVarietales, setVarietales, "Varietales");
         fetchData(getBarricas, setBarricas, "Barricas");
@@ -126,22 +124,23 @@ export default function InventoryPage() {
     ]
 
     return (
-        <div className="min-h-screen bg-background">
-            <div className="bg-gradient-to-r from-primary via-[oklch(0.4_0.1_20)] to-[oklch(0.38_0.1_25)] text-primary-foreground shadow-lg border-b border-border">
-                <div className="container mx-auto px-6 py-8 flex flex-col">
-                    <Link href="/admin">
-                        <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/20 mb-4">
+        <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-muted/40">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-primary via-primary/90 to-accent p-4 md:p-6 shadow-2xl border-b border-primary/30">
+                <div className="container mx-auto">
+                    <Link href="/">
+                        <Button variant="ghost" className="text-primary-foreground hover:bg-primary-foreground/20 mb-4 font-semibold">
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Volver al Panel
                         </Button>
                     </Link>
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-                                <Package className="h-10 w-10" />
+                            <h1 className="text-2xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                                <Package className="h-8 w-8 md:h-10 md:w-10" />
                                 Gestión de Inventario
                             </h1>
-                            <p className="text-primary-foreground/80 text-lg">
+                            <p className="text-sm md:text-base text-white/95 font-medium">
                                 Administra viñedos, varietales, barricas e inventario
                             </p>
                         </div>
@@ -149,71 +148,73 @@ export default function InventoryPage() {
                 </div>
             </div>
 
-            <div className="container mx-auto px-6 py-8">
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-                    <Card className="p-6 bg-card hover:shadow-lg transition-all duration-300 border-2 border-border hover:border-primary/30">
+            <div className="container mx-auto px-4 md:px-6 py-6 md:py-8">
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6 mb-6 md:mb-8">
+                    <Card className="p-4 md:p-6 bg-card hover:shadow-2xl transition-all duration-300 border-2 border-border hover:border-primary/50 hover:scale-[1.02]">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">Viñedos</p>
-                                <p className="text-3xl font-bold mt-1 text-foreground">{vinedos.length}</p>
+                                <p className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wide">Viñedos</p>
+                                <p className="text-2xl md:text-4xl font-bold mt-1 text-foreground">{vinedos.length}</p>
                             </div>
-                            <div className="p-3 rounded-lg bg-primary/10">
-                                <Grape className="h-8 w-8 text-primary" />
+                            <div className="p-2 md:p-3 rounded-lg bg-primary/10 border border-primary/30">
+                                <Grape className="h-6 w-6 md:h-8 md:w-8 text-primary" />
                             </div>
                         </div>
                     </Card>
 
-                    <Card className="p-6 bg-card hover:shadow-lg transition-all duration-300 border-2 border-border hover:border-primary/30">
+                    <Card className="p-4 md:p-6 bg-card hover:shadow-2xl transition-all duration-300 border-2 border-border hover:border-accent/50 hover:scale-[1.02]">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">Varietales</p>
-                                <p className="text-3xl font-bold mt-1 text-foreground">{varietales.length}</p>
+                                <p className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wide">Varietales</p>
+                                <p className="text-2xl md:text-4xl font-bold mt-1 text-foreground">{varietales.length}</p>
                             </div>
-                            <div className="p-3 rounded-lg bg-accent/20">
-                                <Wine className="h-8 w-8 text-accent-foreground" />
+                            <div className="p-2 md:p-3 rounded-lg bg-accent/20 border border-accent/30">
+                                <Wine className="h-6 w-6 md:h-8 md:w-8 text-accent-foreground" />
                             </div>
                         </div>
                     </Card>
 
-                    <Card className="p-6 bg-card hover:shadow-lg transition-all duration-300 border-2 border-border hover:border-primary/30">
+                    <Card className="p-4 md:p-6 bg-card hover:shadow-2xl transition-all duration-300 border-2 border-border hover:border-secondary/50 hover:scale-[1.02]">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">Barricas</p>
-                                <p className="text-3xl font-bold mt-1 text-foreground">{barricas.length}</p>
+                                <p className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wide">Barricas</p>
+                                <p className="text-2xl md:text-4xl font-bold mt-1 text-foreground">{barricas.length}</p>
                             </div>
-                            <div className="p-3 rounded-lg bg-secondary/50">
-                                <Warehouse className="h-8 w-8 text-secondary-foreground" />
+                            <div className="p-2 md:p-3 rounded-lg bg-secondary/50 border border-secondary/30">
+                                <Warehouse className="h-6 w-6 md:h-8 md:w-8 text-secondary-foreground" />
                             </div>
                         </div>
                     </Card>
 
-                    <Card className="p-6 bg-card hover:shadow-lg transition-all duration-300 border-2 border-border hover:border-primary/30">
+                    <Card className="p-4 md:p-6 bg-card hover:shadow-2xl transition-all duration-300 border-2 border-border hover:border-primary/50 hover:scale-[1.02]">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">Total Botellas</p>
-                                <p className="text-3xl font-bold mt-1 text-foreground">
+                                <p className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wide">Botellas</p>
+                                <p className="text-2xl md:text-4xl font-bold mt-1 text-foreground">
                                     {inventarios.reduce((acc, inv) => acc + inv.Lote.cantidad_botellas, 0)}
                                 </p>
                             </div>
-                            <div className="p-3 rounded-lg bg-primary/10">
-                                <Package className="h-8 w-8 text-primary" />
+                            <div className="p-2 md:p-3 rounded-lg bg-primary/10 border border-primary/30">
+                                <Package className="h-6 w-6 md:h-8 md:w-8 text-primary" />
                             </div>
                         </div>
                     </Card>
 
-                    <Card className="p-6 bg-card hover:shadow-lg transition-all duration-300 border-2 border-border hover:border-primary/30">
+                    <Card className="p-4 md:p-6 bg-card hover:shadow-2xl transition-all duration-300 border-2 border-border hover:border-accent/50 hover:scale-[1.02]">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">Mezclas</p>
-                                <p className="text-3xl font-bold mt-1 text-foreground">{mezclas.length}</p>
+                                <p className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wide">Mezclas</p>
+                                <p className="text-2xl md:text-4xl font-bold mt-1 text-foreground">{mezclas.length}</p>
                             </div>
-                            <div className="p-3 rounded-lg bg-accent/20">
-                                <Droplets className="h-8 w-8 text-accent-foreground" />
+                            <div className="p-2 md:p-3 rounded-lg bg-accent/20 border border-accent/30">
+                                <Droplets className="h-6 w-6 md:h-8 md:w-8 text-accent-foreground" />
                             </div>
                         </div>
                     </Card>
                 </div>
 
+                {/* Tabs */}
                 <div className="flex flex-wrap gap-2 mb-6">
                     {tabs.map((tab) => {
                         const Icon = tab.icon
@@ -221,14 +222,14 @@ export default function InventoryPage() {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-300 border-2 ${activeTab === tab.id
-                                    ? "bg-primary text-primary-foreground border-primary shadow-md"
-                                    : "bg-card text-muted-foreground hover:bg-secondary hover:text-secondary-foreground border-border"
+                                className={`flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-bold transition-all duration-300 border-2 text-sm md:text-base ${activeTab === tab.id
+                                    ? "bg-primary text-primary-foreground border-primary shadow-lg scale-[1.02]"
+                                    : "bg-card text-muted-foreground hover:bg-secondary hover:text-secondary-foreground border-border hover:scale-[1.02]"
                                     }`}
                             >
-                                <Icon className="h-5 w-5" />
+                                <Icon className="h-4 w-4 md:h-5 md:w-5" />
                                 {tab.label}
-                                <Badge variant={activeTab === tab.id ? "secondary" : "outline"} className="ml-2">
+                                <Badge variant={activeTab === tab.id ? "secondary" : "outline"} className="ml-2 font-bold text-xs">
                                     {tab.count}
                                 </Badge>
                             </button>
@@ -236,22 +237,23 @@ export default function InventoryPage() {
                     })}
                 </div>
 
-                <Card className="p-6 mb-6 bg-card border-2 border-border">
+                {/* Search and Create */}
+                <Card className="p-4 md:p-6 mb-6 bg-card border-2 border-border">
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="relative flex-1 w-full">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
                             <Input
                                 placeholder={`Buscar ${activeTab}...`}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 bg-background border-2 border-input focus:border-primary"
+                                className="pl-10 bg-background border-2 border-input focus:border-primary text-sm md:text-base"
                             />
                         </div>
                         <Button
                             onClick={() => handleCreate(activeTab)}
-                            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300 w-full md:w-auto"
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300 w-full md:w-auto font-semibold text-sm md:text-base"
                         >
-                            <Plus className="mr-2 h-5 w-5" />
+                            <Plus className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                             Crear{" "}
                             {activeTab === "vinedos"
                                 ? "Viñedo"
@@ -266,48 +268,48 @@ export default function InventoryPage() {
                     </div>
                 </Card>
 
-                <Card className="overflow-hidden border-2 border-border shadow-md">
-                    {/* Viñedos Table */}
+                {/* Tables */}
+                <Card className="overflow-hidden border-2 border-border shadow-lg">
                     {activeTab === "vinedos" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-primary text-primary-foreground">
+                                <thead className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Nombre</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Ubicación</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Contacto</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Teléfono</th>
-                                        <th className="px-6 py-4 text-right text-sm font-semibold">Acciones</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Nombre</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Ubicación</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Contacto</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Teléfono</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-bold">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border bg-card">
-                                    {vinedos.map((vinedo, index) => (
+                                    {vinedos.map((vinedo) => (
                                         <tr key={vinedo.id_vinedo} className="hover:bg-accent/50 transition-colors">
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <Grape className="h-5 w-5 text-primary" />
-                                                    <span className="font-medium text-foreground">{vinedo.nombre}</span>
+                                                    <Grape className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                                                    <span className="font-medium text-foreground text-sm md:text-base">{vinedo.nombre}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <MapPin className="h-4 w-4" />
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
+                                                <div className="flex items-center gap-2 text-muted-foreground text-sm md:text-base">
+                                                    <MapPin className="h-3 w-3 md:h-4 md:w-4" />
                                                     {vinedo.ubicacion}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <User className="h-4 w-4" />
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
+                                                <div className="flex items-center gap-2 text-muted-foreground text-sm md:text-base">
+                                                    <User className="h-3 w-3 md:h-4 md:w-4" />
                                                     {vinedo.contacto}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <Phone className="h-4 w-4" />
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
+                                                <div className="flex items-center gap-2 text-muted-foreground text-sm md:text-base">
+                                                    <Phone className="h-3 w-3 md:h-4 md:w-4" />
                                                     {vinedo.telefono || "N/A"}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Button
                                                         size="sm"
@@ -315,7 +317,7 @@ export default function InventoryPage() {
                                                         onClick={() => handleEdit(vinedo, "vinedo")}
                                                         className="hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:text-blue-600"
                                                     >
-                                                        <Edit className="h-4 w-4" />
+                                                        <Edit className="h-3 w-3 md:h-4 md:w-4" />
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -323,7 +325,7 @@ export default function InventoryPage() {
                                                         onClick={() => handleDelete(vinedo.id_vinedo)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
                                                     </Button>
                                                 </div>
                                             </td>
@@ -338,24 +340,24 @@ export default function InventoryPage() {
                     {activeTab === "varietales" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-accent text-accent-foreground">
+                                <thead className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Nombre</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Descripción</th>
-                                        <th className="px-6 py-4 text-right text-sm font-semibold">Acciones</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Nombre</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Descripción</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-bold">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border bg-card">
                                     {varietales.map((varietal) => (
                                         <tr key={varietal.id_varietal} className="hover:bg-accent/50 transition-colors">
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <Wine className="h-5 w-5 text-accent-foreground" />
-                                                    <span className="font-medium text-foreground">{varietal.nombre}</span>
+                                                    <Wine className="h-4 w-4 md:h-5 md:w-5 text-accent-foreground" />
+                                                    <span className="font-medium text-foreground text-sm md:text-base">{varietal.nombre}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-muted-foreground">{varietal.descripcion || "Sin descripción"}</td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4 text-muted-foreground text-sm md:text-base">{varietal.descripcion || "Sin descripción"}</td>
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Button
                                                         size="sm"
@@ -363,7 +365,7 @@ export default function InventoryPage() {
                                                         onClick={() => handleEdit(varietal, "varietal")}
                                                         className="hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:text-blue-600"
                                                     >
-                                                        <Edit className="h-4 w-4" />
+                                                        <Edit className="h-3 w-3 md:h-4 md:w-4" />
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -371,7 +373,7 @@ export default function InventoryPage() {
                                                         onClick={() => handleDelete(varietal.id_varietal)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
                                                     </Button>
                                                 </div>
                                             </td>
@@ -386,42 +388,42 @@ export default function InventoryPage() {
                     {activeTab === "barricas" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-secondary text-secondary-foreground">
+                                <thead className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Tipo de Madera</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Capacidad</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Fecha de Compra</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Costo</th>
-                                        <th className="px-6 py-4 text-right text-sm font-semibold">Acciones</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Tipo de Madera</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Capacidad</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Fecha de Compra</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Costo</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-bold">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border bg-card">
                                     {barricas.map((barrica) => (
                                         <tr key={barrica.id_barrica} className="hover:bg-accent/50 transition-colors">
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <Warehouse className="h-5 w-5 text-secondary-foreground" />
-                                                    <span className="font-medium text-foreground">{barrica.tipo_madera}</span>
+                                                    <Warehouse className="h-4 w-4 md:h-5 md:w-5 text-secondary-foreground" />
+                                                    <span className="font-medium text-foreground text-sm md:text-base">{barrica.tipo_madera}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <Droplet className="h-4 w-4" />
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
+                                                <div className="flex items-center gap-2 text-muted-foreground text-sm md:text-base">
+                                                    <Droplet className="h-3 w-3 md:h-4 md:w-4" />
                                                     {barrica.capacidad_litros}L
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <Calendar className="h-4 w-4" />
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
+                                                <div className="flex items-center gap-2 text-muted-foreground text-sm md:text-base">
+                                                    <Calendar className="h-3 w-3 md:h-4 md:w-4" />
                                                     {new Date(barrica.fecha_compra).toLocaleDateString()}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2 text-muted-foreground">
-                                                    <DollarSign className="h-4 w-4" />${barrica.costo}
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
+                                                <div className="flex items-center gap-2 text-muted-foreground text-sm md:text-base">
+                                                    <DollarSign className="h-3 w-3 md:h-4 md:w-4" />${Number(barrica.costo).toFixed(2)}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Button
                                                         size="sm"
@@ -429,7 +431,7 @@ export default function InventoryPage() {
                                                         onClick={() => handleEdit(barrica, "barrica")}
                                                         className="hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:text-blue-600"
                                                     >
-                                                        <Edit className="h-4 w-4" />
+                                                        <Edit className="h-3 w-3 md:h-4 md:w-4" />
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -437,7 +439,7 @@ export default function InventoryPage() {
                                                         onClick={() => handleDelete(barrica.id_barrica)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
                                                     </Button>
                                                 </div>
                                             </td>
@@ -452,36 +454,36 @@ export default function InventoryPage() {
                     {activeTab === "inventario" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-primary text-primary-foreground">
+                                <thead className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Número de Lote</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Ubicación</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Cantidad de Botellas</th>
-                                        <th className="px-6 py-4 text-right text-sm font-semibold">Acciones</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Número de Lote</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Ubicación</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Cantidad de Botellas</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-bold">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border bg-card">
                                     {inventarios.map((inventario) => (
                                         <tr key={inventario.id_inventario} className="hover:bg-accent/50 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <Badge variant="outline" className="font-mono">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
+                                                <Badge variant="outline" className="font-mono text-xs md:text-sm">
                                                     {inventario.Lote.numero_lote}
                                                 </Badge>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <MapPin className="h-5 w-5 text-primary" />
-                                                    <span className="font-medium text-foreground">{inventario.ubicacion}</span>
+                                                    <MapPin className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                                                    <span className="font-medium text-foreground text-sm md:text-base">{inventario.ubicacion}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <Package className="h-5 w-5 text-muted-foreground" />
-                                                    <span className="font-semibold text-foreground">{inventario.cantidad_botellas}</span>
-                                                    <span className="text-muted-foreground text-sm">botellas</span>
+                                                    <Package className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
+                                                    <span className="font-semibold text-foreground text-sm md:text-base">{inventario.Lote.cantidad_botellas}</span>
+                                                    <span className="text-muted-foreground text-xs md:text-sm">botellas</span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Button
                                                         size="sm"
@@ -489,7 +491,7 @@ export default function InventoryPage() {
                                                         onClick={() => handleEdit(inventario, "inventario")}
                                                         className="hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:text-blue-600"
                                                     >
-                                                        <Edit className="h-4 w-4" />
+                                                        <Edit className="h-3 w-3 md:h-4 md:w-4" />
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -497,7 +499,7 @@ export default function InventoryPage() {
                                                         onClick={() => handleDelete(inventario.id_inventario)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
                                                     </Button>
                                                 </div>
                                             </td>
@@ -512,34 +514,34 @@ export default function InventoryPage() {
                     {activeTab === "mezclas" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-accent text-accent-foreground">
+                                <thead className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
                                     <tr>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Vino</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Varietal</th>
-                                        <th className="px-6 py-4 text-left text-sm font-semibold">Porcentaje</th>
-                                        <th className="px-6 py-4 text-right text-sm font-semibold">Acciones</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Vino</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Varietal</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-bold">Porcentaje</th>
+                                        <th className="px-4 md:px-6 py-3 md:py-4 text-right text-xs md:text-sm font-bold">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-border bg-card">
                                     {mezclas.map((mezcla) => (
                                         <tr key={mezcla.id_mezcla} className="hover:bg-accent/50 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <Badge variant="outline" className="font-mono">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
+                                                <Badge variant="outline" className="font-mono text-xs md:text-sm">
                                                     {mezcla.Vino.nombre}
                                                 </Badge>
                                             </td>
-                                            <td className="px-6 py-4">
-                                                <Badge variant="outline" className="font-mono">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
+                                                <Badge variant="outline" className="font-mono text-xs md:text-sm">
                                                     {mezcla.Varietal.nombre}
                                                 </Badge>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <Droplets className="h-5 w-5 text-accent-foreground" />
-                                                    <span className="font-semibold text-foreground">{mezcla.porcentaje}%</span>
+                                                    <Droplets className="h-4 w-4 md:h-5 md:w-5 text-accent-foreground" />
+                                                    <span className="font-semibold text-foreground text-sm md:text-base">{mezcla.porcentaje}%</span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td className="px-4 md:px-6 py-3 md:py-4">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Button
                                                         size="sm"
@@ -547,7 +549,7 @@ export default function InventoryPage() {
                                                         onClick={() => handleEdit(mezcla, "mezcla")}
                                                         className="hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:text-blue-600"
                                                     >
-                                                        <Edit className="h-4 w-4" />
+                                                        <Edit className="h-3 w-3 md:h-4 md:w-4" />
                                                     </Button>
                                                     <Button
                                                         size="sm"
@@ -555,7 +557,7 @@ export default function InventoryPage() {
                                                         onClick={() => handleDelete(mezcla.id_mezcla)}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
-                                                        <Trash2 className="h-4 w-4" />
+                                                        <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
                                                     </Button>
                                                 </div>
                                             </td>

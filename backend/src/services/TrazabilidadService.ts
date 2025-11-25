@@ -1,8 +1,8 @@
 import prisma from '../lib/PrismaService';
-import { Cosecha, Vinedo, Lote, Control_Calidad, Proceso_Produccion } from '@prisma/client';
+import { Cosecha, Vinedo, Lote, Control_Calidad, Proceso_Produccion } from '../generated/prisma/client';
 import { CosechaCreationData, CosechaUpdateData, LoteCreationData, LoteUpdateData, ProcesoProduccionCreationData, ProcesoProduccionUpdateData, ControlCalidadCreationData, ControlCalidadUpdateData } from '../types/trazabilidad';
 import { generateUuid } from '../lib/IdGenerator';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '../generated/prisma/client';
 import { logger } from '../utils/logger';
 
 // ----------------------------------------
@@ -36,7 +36,7 @@ export const createCosecha = async (data: CosechaCreationData): Promise<Cosecha>
             include: { Vinedo: true }
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('El Viñedo de origen no fue encontrado.');
         }
         logger.error('Error al crear Cosecha.', { context: 'TrazabilidadService', error });
@@ -63,7 +63,7 @@ export const updateCosecha = async (id: string, data: CosechaUpdateData): Promis
             data: data as any,
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Cosecha no encontrada para actualizar.');
         }
         throw error;
@@ -79,10 +79,10 @@ export const deleteCosecha = async (id: string): Promise<Cosecha> => {
             where: { id_cosecha: id },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Cosecha no encontrada para eliminar.');
         }
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2003') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
             throw new Error('No se puede eliminar la cosecha porque está asociada a un Lote de Producción.');
         }
         throw error;
@@ -127,7 +127,7 @@ export const createLote = async (data: LoteCreationData): Promise<Lote> => {
             include: { Vino: true, Cosecha: true },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
             throw new Error(`El número de lote '${data.numero_lote}' ya existe.`);
         }
         logger.error('Error al crear Lote.', { context: 'TrazabilidadService', error });
@@ -157,11 +157,11 @@ export const updateLote = async (id: string, data: LoteUpdateData): Promise<Lote
             include: { Vino: true, Cosecha: true, Barrica: true },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Lote no encontrado para actualizar.');
         }
         // Si el número de lote se cambia y ya existe (P2002)
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
             throw new Error('El número de lote ya está en uso.');
         }
         logger.error('Error al actualizar Lote.', { context: 'TrazabilidadService', error });
@@ -203,11 +203,11 @@ export const deleteLote = async (id: string): Promise<Lote> => {
             where: { id_lote: id },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Lote no encontrado para eliminar.');
         }
         // Si el lote ya tiene Inventario o Procesos de Producción asociados.
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2003') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
             throw new Error('No se puede eliminar el lote porque ya tiene movimientos de inventario o procesos registrados.');
         }
         throw error;
@@ -241,7 +241,7 @@ export const createProcesoProduccion = async (data: ProcesoProduccionCreationDat
             },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('El Lote o la Barrica de referencia no existen.');
         }
         logger.error('Error al crear Proceso de Producción.', { context: 'TrazabilidadService', error });
@@ -269,7 +269,7 @@ export const updateProcesoProduccion = async (id: string, data: ProcesoProduccio
             data: data as any,
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Proceso de Producción no encontrado para actualizar.');
         }
         throw error;
@@ -286,11 +286,11 @@ export const deleteProcesoProduccion = async (id: string): Promise<Proceso_Produ
             where: { id_proceso: id },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Proceso de Producción no encontrado para eliminar.');
         }
         // Si tiene registros de Control de Calidad asociados (P2003)
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2003') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
             throw new Error('No se puede eliminar el proceso porque tiene registros de Control de Calidad asociados.');
         }
         throw error;
@@ -320,7 +320,7 @@ export const createControlCalidad = async (data: ControlCalidadCreationData): Pr
             include: { Proceso_Produccion: true }
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('El Proceso de Producción de referencia no existe.');
         }
         logger.error('Error al crear Control de Calidad.', { context: 'TrazabilidadService', error });
@@ -347,7 +347,7 @@ export const updateControlCalidad = async (id: string, data: ControlCalidadUpdat
             data: data as any,
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Control de Calidad no encontrado para actualizar.');
         }
         throw error;
@@ -363,7 +363,7 @@ export const deleteControlCalidad = async (id: string): Promise<Control_Calidad>
             where: { id_control: id },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Control de Calidad no encontrado para eliminar.');
         }
         throw error;

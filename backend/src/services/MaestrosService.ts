@@ -1,8 +1,8 @@
 import prisma from '../lib/PrismaService';
-import { Vinedo, Varietal, Barrica, Mezcla_Vino } from '@prisma/client';
+import { Vinedo, Varietal, Barrica, Mezcla_Vino } from '../generated/prisma/client';
 import { CreateVinedoData, UpdateVinedoData, CreateVarietalData, UpdateVarietalData, BarricaCreationData, BarricaUpdateData, CreateMezclaVinoData } from '../types/maestros';
 import { generateUuid } from '../lib/IdGenerator';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '../generated/prisma/client';
 import { logger } from '../utils/logger';
 
 /*
@@ -21,7 +21,7 @@ export const createVinedo = async (data: CreateVinedoData): Promise<Vinedo> => {
             },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
             logger.warn('Error al crear viñedo: Nombre o campo único duplicado.', { context: 'MaestrosService', error });
             throw new Error('Ya existe un viñedo con el mismo nombre o contacto único.');
         }
@@ -41,7 +41,7 @@ export const updateVinedo = async (id: string, data: UpdateVinedoData): Promise<
             data: data as any,
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Viñedo no encontrado para actualizar.');
         }
         throw error;
@@ -54,7 +54,7 @@ export const deleteVinedo = async (id: string): Promise<Vinedo> => {
             where: { id_vinedo: id },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Viñedo no encontrado para eliminar.');
         }
         throw error;
@@ -76,7 +76,7 @@ export const createVarietal = async (data: CreateVarietalData): Promise<Varietal
             },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
             throw new Error('Ya existe un varietal con el mismo nombre.');
         }
         throw error;
@@ -95,7 +95,7 @@ export const updateVarietal = async (id: string, data: UpdateVarietalData): Prom
             data: data as any,
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Varietal no encontrado para actualizar.');
         }
         throw error;
@@ -110,10 +110,10 @@ export const deleteVarietal = async (id: string): Promise<Varietal> => {
     } catch (error) {
         // P2003 indica que la restricción de clave foránea ha fallado 
         // (el varietal está en uso en Mezcla_Vino)
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2003') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
             throw new Error('No se puede eliminar el varietal porque está asociado a una o más mezclas de vino (integridad referencial).');
         }
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Varietal no encontrado para eliminar.');
         }
         throw error;
@@ -152,7 +152,7 @@ export const updateBarrica = async (id: string, data: BarricaUpdateData): Promis
             data: data as any,
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Barrica no encontrada para actualizar.');
         }
         throw error;
@@ -167,7 +167,7 @@ export const deleteBarrica = async (id: string): Promise<Barrica> => {
             },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Barrica no encontrada para eliminar.');
         }
         throw error;
@@ -192,10 +192,10 @@ export const createMezclaVino = async (data: CreateMezclaVinoData): Promise<Mezc
             include: { Vino: true, Varietal: true },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
             throw new Error('El varietal ya está registrado para este vino.');
         }
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2003') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
             throw new Error('El ID de Vino o Varietal proporcionado no existe (integridad referencial).');
         }
         logger.error('Error desconocido al crear mezcla de vino.', { context: 'MaestrosService', error });
@@ -215,7 +215,7 @@ export const deleteMezclaVino = async (id: string): Promise<Mezcla_Vino> => {
             where: { id_mezcla: id },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Mezcla de Vino no encontrada para eliminar.');
         }
         throw error;

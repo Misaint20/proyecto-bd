@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { logout } from "@/lib/logout"
+import Image from "next/image"
 
 export function Header() {
     const [userName, setUserName] = React.useState("Usuario")
@@ -48,8 +49,8 @@ export function Header() {
             <div className="flex h-16 items-center justify-between px-4 md:px-6">
                 {/* Logo y nombre del sistema */}
                 <div className="flex items-center gap-2">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                        <span className="font-bold text-lg">D</span>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg text-primary-foreground">
+                        <Image src="/logo.svg" alt="Logo" width={40} height={40} />
                     </div>
                     <div className="hidden sm:block">
                         <h1 className="font-semibold text-lg">Drosophila</h1>

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as VinoService from '../services/VinoService';
-import { Vino_tipo as TipoVino } from '@prisma/client';
+import { Vino_tipo as TipoVino } from '../generated/prisma/client';
 import { CreateVinoData, UpdateVinoData } from '../types/vino';
 import { HttpError } from '../middlewares/ErrorHandler';
 

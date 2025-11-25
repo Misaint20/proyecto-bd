@@ -4,7 +4,7 @@ import { UserRole, ROLE_ROUTE_MAP } from '@/types/auth';
 // Crear un array de rutas protegidas para el matcher
 const PROTECTED_PATHS = Object.values(ROLE_ROUTE_MAP);
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const accessToken = request.cookies.get('access_token');
     const userRole = request.cookies.get('user_role')?.value as UserRole | undefined; // Obtener el rol

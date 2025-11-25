@@ -1,8 +1,8 @@
 import prisma from '../lib/PrismaService';
-import { Inventario } from '@prisma/client';
+import { Inventario } from '../generated/prisma/client';
 import { CreateInventarioData } from '../types/inventario';
 import { generateUuid } from '../lib/IdGenerator';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Prisma } from '../generated/prisma/client';
 import { logger } from '../utils/logger';
 
 // ----------------------------------------
@@ -35,7 +35,7 @@ export const createOrUpdateInventario = async (data: CreateInventarioData): Prom
 
             // Si la operación es negativa, verificar que el lote tenga suficientes botellas
             if (data.cantidad_botellas < 0 && lote.cantidad_botellas + data.cantidad_botellas < 0) {
-                throw new Error('No hay suficientes botellas en el Lote seleccionado para realizar esta salida.');
+                throw new Error('No hay suficientes botellas en el Lote seleccionado para realizar esta operación.');
             }
 
             // 1. Intentar encontrar un registro existente para ese lote y ubicación
@@ -112,7 +112,7 @@ export const deleteInventarioRecord = async (id: string): Promise<Inventario> =>
             where: { id_inventario: id },
         });
     } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             throw new Error('Registro de Inventario no encontrado para eliminar.');
         }
         throw error;
