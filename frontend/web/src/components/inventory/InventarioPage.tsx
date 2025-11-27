@@ -31,7 +31,7 @@ import InventarioModal from "@/components/inventory/InventarioModal"
 import MezclaVinoModal from "@/components/inventory/MezclaVinoModal"
 import { Vinedo, Varietal, Barrica, MezclaVino } from "@/types/masters"
 import { Inventario } from "@/types/inventory";
-import { getVinedos, getVarietales, getBarricas, getMezclasVino } from "@/services/MastersService";
+import { getVinedos, getVarietales, getBarricas, getMezclasVino, deleteBarrica, deleteMezclaVino, deleteVinedo, deleteVarietal } from "@/services/MastersService";
 import { getInventario, deleteInventario } from "@/services/InventoryService";
 
 export default function InventoryPage() {
@@ -99,12 +99,12 @@ export default function InventoryPage() {
         if (type === "mezclas") setMezclaModalOpen(true)
     }
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (id: string, deleter: any) => {
         if (!window.confirm("¿Estás seguro de que quieres eliminar este registro?")) {
             return
         }
 
-        const result = await deleteInventario(id)
+        const result = await deleter(id)
 
         if (result && result.success) {
             fetchData(getInventario, setInventarios, "Inventario")
@@ -322,7 +322,10 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => handleDelete(vinedo.id_vinedo)}
+                                                        onClick={() => {
+                                                            handleDelete(vinedo.id_vinedo, deleteVinedo)
+                                                            fetchData(getVinedos, setVinedos, "Viñedos")
+                                                        }}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
@@ -370,7 +373,10 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => handleDelete(varietal.id_varietal)}
+                                                        onClick={() => {
+                                                            handleDelete(varietal.id_varietal, deleteVarietal)
+                                                            fetchData(getVarietales, setVarietales, "Varietales")
+                                                        }}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
@@ -436,7 +442,10 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => handleDelete(barrica.id_barrica)}
+                                                        onClick={() => {
+                                                            handleDelete(barrica.id_barrica, deleteBarrica)
+                                                            fetchData(getBarricas, setBarricas, "Barricas")
+                                                        }}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
@@ -496,7 +505,10 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => handleDelete(inventario.id_inventario)}
+                                                        onClick={() => {
+                                                            handleDelete(inventario.id_inventario, deleteInventario)
+                                                            fetchData(getInventario, setInventarios, "Inventario")
+                                                        }}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
@@ -554,7 +566,10 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => handleDelete(mezcla.id_mezcla)}
+                                                        onClick={() => {
+                                                            handleDelete(mezcla.id_mezcla, deleteMezclaVino)
+                                                            fetchData(getMezclasVino, setMezclas, "Mezclas")
+                                                        }}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3 w-3 md:h-4 md:w-4" />

@@ -42,3 +42,34 @@ export const getUsuarios = async (req: Request, res: Response, next: NextFunctio
         next(error);
     }
 };
+
+// Endpoint para actualizar un usuario
+export const updateUsuario = async (req: Request, res: Response, next: NextFunction) => {
+    const id: string = req.params.id;
+    const data = req.body;
+    
+    try {
+        const usuarioActualizado = await UsuarioService.updateUser(id, data);
+        return res.status(200).json({ message: 'Usuario actualizado.', data: usuarioActualizado });
+    } catch (error) {
+        if (error instanceof Error && error.message.includes('no encontrado')) {
+            return next(new HttpError(error.message, 404));
+        }
+        next(error);
+    }
+};
+
+// Endpoint para eliminar un usuario
+export const deleteUsuario = async (req: Request, res: Response, next: NextFunction) => {
+    const id: string = req.params.id;
+    
+    try {
+        const usuarioEliminado = await UsuarioService.deleteUser(id);
+        return res.status(200).json({ message: 'Usuario eliminado.', data: usuarioEliminado });
+    } catch (error) {
+        if (error instanceof Error && error.message.includes('no encontrado')) {
+            return next(new HttpError(error.message, 404));
+        }
+        next(error);
+    }
+};

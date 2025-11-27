@@ -1,6 +1,7 @@
 // src/services/VentasService.ts (Fragmento crucial de la función registerVentaTransaction)
 import prisma from '../lib/PrismaService';
-import { Venta, Detalle_Venta, Inventario, Lote } from '@prisma/client';
+import { Prisma } from '../generated/prisma/client';
+import { Venta, Detalle_Venta, Inventario, Lote } from '../generated/prisma/client';
 import { VentaCreationData} from '../types/ventas';
 import { generateUuid } from '../lib/IdGenerator';
 import { logger } from '../utils/logger';
@@ -115,4 +116,20 @@ export const findAllVentas = async (): Promise<Venta[]> => {
     return prisma.venta.findMany({
         include: { Detalle_Venta: { include: { Vino: true } } },
     });
+};
+
+/**
+ * Elimina una venta por ID.
+ */
+export const deleteVenta = async (id: string): Promise<Venta> => {
+    try {
+        return await prisma.venta.delete({
+            where: { id_venta: id },
+        });
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw new Error('Venta no encontrada para eliminar.');
+        }
+        throw error;
+    }
 };

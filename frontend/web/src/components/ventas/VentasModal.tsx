@@ -55,8 +55,6 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
             return
         }
 
-        console.log(inventario)
-
         const subtotal = Number(inventario.Lote.Vino.precio_botella) * cantidad
 
         const nuevoItem: ItemCarrito = {

@@ -17,5 +17,8 @@ router.post('/registrar', authorizeRoles(RolNombre.Vendedor), VentasController.r
 // Obtener todas las ventas (Acceso para reportes)
 router.get('/', authorizeRoles(RolNombre.Administrador), VentasController.getVentas);
 
+// Eliminar una venta (Acceso para reportes)
+router.delete('/:id', authorizeRoles(RolNombre.Administrador), VentasController.deleteVenta);
+
 
 export default router;

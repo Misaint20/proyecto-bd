@@ -77,19 +77,22 @@ export default function TraceabilityPageComponent() {
 
     const handleDelete = async (item: any, type: TabType) => {
         if (confirm("¿Estás seguro de eliminar este registro?")) {
-            console.log("Deleting:", type, item)
             switch (type) {
                 case "cosechas":
                     await deleteCosecha(item.id_cosecha)
+                    fetchData(getCosechas, setCosechas, "Cosechas")
                     break
                 case "lotes":
                     await deleteLote(item.id_lote)
+                    fetchData(getLotes, setLotes, "Lotes")
                     break
                 case "procesos":
                     await deleteProcesoProduccion(item.id_proceso)
+                    fetchData(getProcesosProduccion, setProcesos, "Procesos")
                     break
                 case "controles":
                     await deleteControlCalidad(item.id_control)
+                    fetchData(getControlCalidad, setControles, "Controles")
                     break
             }
         }

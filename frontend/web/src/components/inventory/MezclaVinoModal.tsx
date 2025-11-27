@@ -56,8 +56,6 @@ export default function MezclaVinoModal({ open, onClose, mezcla, onSuccess }: Me
             porcentaje: Number.parseFloat(formData.porcentaje),
         }
 
-        console.log(dataToSend);
-
         const isUpdate = mezcla !== null && mezcla.id_mezcla
 
         const serviceCall = isUpdate ? updateMezclaVino(mezcla.id_mezcla, dataToSend) : createMezclaVino(dataToSend)

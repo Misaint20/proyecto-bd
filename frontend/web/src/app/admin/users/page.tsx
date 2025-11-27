@@ -3,7 +3,7 @@
 import { Users, Search, UserPlus, Edit, Trash2, Shield, User, Loader2, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect, useMemo } from "react"
-import { getUsers } from "@/services/UsersService" // Importar la función de servicio
+import { getUsers, deleteUser } from "@/services/UsersService" // Importar la función de servicio
 
 // Definición de tipos para la data mapeada
 interface UserData {
@@ -73,10 +73,7 @@ export default function UsersPage() {
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
-
-    // Lógica para cargar los usuarios
-    useEffect(() => {
-        const fetchUsers = async () => {
+    const fetchUsers = async () => {
             setIsLoading(true)
             setError(null)
             try {
@@ -99,8 +96,21 @@ export default function UsersPage() {
                 setIsLoading(false)
             }
         }
+
+
+    // Lógica para cargar los usuarios
+    useEffect(() => {
         fetchUsers()
     }, [])
+
+    const handleDelete = async (id: string) => {
+        const result = await deleteUser(id)
+        if (result && result.success) {
+            fetchUsers()
+        } else {
+            console.error("Error al eliminar usuario:", result?.errorMessage)
+        }
+    }
 
 
     const getRoleColor = (role: string) => {

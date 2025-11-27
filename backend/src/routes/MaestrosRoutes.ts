@@ -29,6 +29,7 @@ router.delete('/barricas/:id', authorizeRoles(RolNombre.Encargado_de_Bodega), Ma
 // Rutas CRUD para la gestión de mezclas de vino (RF01)
 router.post('/mezcla-vino', authorizeRoles(RolNombre.Encargado_de_Bodega), MaestrosController.createMezclaVino);
 router.get('/mezcla-vino', MaestrosController.getMezclasVino);
+router.patch('/mezcla-vino/:id', authorizeRoles(RolNombre.Encargado_de_Bodega), MaestrosController.updateMezclaVino);
 router.delete('/mezcla-vino/:id', authorizeRoles(RolNombre.Encargado_de_Bodega), MaestrosController.deleteMezclaVino);
 
 export default router;

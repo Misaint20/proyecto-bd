@@ -53,6 +53,8 @@ interface NewUserData {
     role: string;
 }
 
+interface UpdateUserData extends Partial<NewUserData> { }
+
 interface RoleApi {
     id_rol: string;
     nombre: string;
@@ -119,6 +121,59 @@ export async function createUser(userData: NewUserData) {
         return {
             success: false,
             errorMessage: "Error al crear usuario"
+        }
+    }
+}
+
+export async function updateUser(id: string, userData: UpdateUserData) {
+    try {
+        const response = await fetch(`${API_ROUTE_URL}/${id}`, {
+            method: "PATCH",
+            body: JSON.stringify(userData),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return {
+                success: true,
+                data: data
+            }
+        } else if (response.status === 401) {
+            return {
+                success: false,
+                errorMessage: "No tienes permisos para acceder a este recurso"
+            }
+        }
+    } catch (error) {
+        console.error("Error al actualizar usuario:", error);
+        return {
+            success: false,
+            errorMessage: "Error al actualizar usuario"
+        }
+    }
+}
+
+export async function deleteUser(id: string) {
+    try {
+        const response = await fetch(`${API_ROUTE_URL}/${id}`, {
+            method: "DELETE",
+        });
+        if (response.ok) {
+            const data = await response.json();
+            return {
+                success: true,
+                data: data
+            }
+        } else if (response.status === 401) {
+            return {
+                success: false,
+                errorMessage: "No tienes permisos para acceder a este recurso"
+            }
+        }
+    } catch (error) {
+        console.error("Error al eliminar usuario:", error);
+        return {
+            success: false,
+            errorMessage: "Error al eliminar usuario"
         }
     }
 }

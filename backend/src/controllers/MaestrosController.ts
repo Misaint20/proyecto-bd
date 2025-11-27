@@ -209,6 +209,21 @@ export const getMezclasVino = async (req: Request, res: Response, next: NextFunc
     }
 };
 
+export const updateMezclaVino = async (req: Request, res: Response, next: NextFunction) => {
+    const id: string = req.params.id;
+    const body = req.body;
+
+    try {
+        const mezclaActualizada = await MaestrosService.updateMezclaVino(id, body);
+        return res.status(200).json({ message: 'Mezcla de Vino actualizada.', data: mezclaActualizada });
+    } catch (error) {
+        if (error instanceof Error && error.message.includes('no encontrada')) {
+            return next(new HttpError(error.message, 404));
+        }
+        next(error);
+    }
+};
+
 export const deleteMezclaVino = async (req: Request, res: Response, next: NextFunction) => {
     const id: string = req.params.id;
     

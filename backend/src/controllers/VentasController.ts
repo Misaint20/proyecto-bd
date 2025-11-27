@@ -53,3 +53,21 @@ export const getVentas = async (req: Request, res: Response, next: NextFunction)
         next(error);
     }
 };
+
+/**
+ * Elimina una venta (Para reportes y auditoría).
+ * Actor: Administrador, Vendedor.
+ */
+export const deleteVenta = async (req: Request, res: Response, next: NextFunction) => {
+    const id: string = req.params.id;
+    
+    try {
+        const ventaEliminada = await VentasService.deleteVenta(id);
+        return res.status(200).json({ message: 'Venta eliminada.', data: ventaEliminada });
+    } catch (error) {
+        if (error instanceof Error && error.message.includes('no encontrada')) {
+            return next(new HttpError(error.message, 404));
+        }
+        next(error);
+    }
+};

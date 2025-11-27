@@ -26,4 +26,7 @@ router.get('/roles/ids', async (req, res, next) => {
     }
 });
 
+router.patch('/:id', UsuarioController.updateUsuario);
+router.delete('/:id', UsuarioController.deleteUsuario);
+
 export default router;

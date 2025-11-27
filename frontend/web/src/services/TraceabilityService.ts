@@ -197,12 +197,16 @@ export async function createCosecha(cosechaData: NewCosechaData) {
 
 export async function updateCosecha(id: string, cosechaData: UpdateCosechaData) {
     try {
+        const body = {
+            ...cosechaData,
+            fecha_cosecha: cosechaData.fecha_cosecha ? new Date(cosechaData.fecha_cosecha).toISOString() : null,
+        }
         const response = await fetch(`/api/traceability/cosecha/${id}`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(cosechaData)
+            body: JSON.stringify(body)
         });
         if (response.ok) {
             const result = await response.json();

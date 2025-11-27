@@ -99,3 +99,30 @@ export const validateUserCredentials = async (username: string, pass: string): P
 export const getRoles = async () => {
     return prisma.rol.findMany();
 };
+
+export const updateUser = async (id: string, data: UpdateUsuarioData): Promise<Usuario> => {
+    try {
+        return await prisma.usuario.update({
+            where: { id_usuario: id },
+            data: data as any,
+        });
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw new Error('Usuario no encontrado para actualizar.');
+        }
+        throw error;
+    }
+};
+
+export const deleteUser = async (id: string): Promise<Usuario> => {
+    try {
+        return await prisma.usuario.delete({
+            where: { id_usuario: id },
+        });
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw new Error('Usuario no encontrado para eliminar.');
+        }
+        throw error;
+    }
+};

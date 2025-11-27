@@ -209,6 +209,20 @@ export const findAllMezclasVino = async (): Promise<Mezcla_Vino[]> => {
     });
 };
 
+export const updateMezclaVino = async (id: string, data: Partial<CreateMezclaVinoData>): Promise<Mezcla_Vino> => {
+    try {
+        return await prisma.mezcla_Vino.update({
+            where: { id_mezcla: id },
+            data: data,
+        });
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            throw new Error('Mezcla de Vino no encontrada para actualizar.');
+        }
+        throw error;
+    }
+};
+
 export const deleteMezclaVino = async (id: string): Promise<Mezcla_Vino> => {
     try {
         return await prisma.mezcla_Vino.delete({
