@@ -1,22 +1,14 @@
 import { Venta, DetalleVentaItem } from "@/types/ventas";
+import api from "@/lib/apiClient";
 
 const API_ROUTE_URL = "/api/ventas";
 
 export async function getVentas() {
-    const response = await fetch(API_ROUTE_URL, {
-        method: "GET",
-    });
-    if (response.ok) {
-        const data = await response.json();
-        return {
-            success: true,
-            data: data
-        }
-    } else if (response.status === 401) {
-        return {
-            success: false,
-            errorMessage: "No tienes permisos para acceder a este recurso"
-        }
+    try {
+        return await api.get(API_ROUTE_URL);
+    } catch (error) {
+        console.error("Error al obtener ventas:", error);
+        return { success: false, errorMessage: "Error al obtener ventas" };
     }
 }
 
@@ -29,22 +21,7 @@ export async function createVenta(data: NewVentaData) {
         const body = {
             ...data,
         }
-        const response = await fetch(API_ROUTE_URL, {
-            method: "POST",
-            body: JSON.stringify(body),
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return {
-                success: true,
-                data: data
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.post(API_ROUTE_URL, body);
     } catch (error) {
         console.error("Error al crear venta:", error);
         return {
@@ -67,22 +44,7 @@ export async function updateVenta(id: string, data: UpdateVentaData) {
             }), 
             fecha_venta: data.fecha_venta ? new Date(data.fecha_venta).toISOString() : null,
         }
-        const response = await fetch(`/api/ventas/${id}`, {
-            method: "PATCH",
-            body: JSON.stringify(body),
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return {
-                success: true,
-                data: data
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.patch(`/api/ventas/${id}`, body);
     } catch (error) {
         console.error("Error al actualizar venta:", error);
         return {
@@ -94,21 +56,7 @@ export async function updateVenta(id: string, data: UpdateVentaData) {
 
 export async function deleteVenta(id: string) {
     try {
-        const response = await fetch(`/api/ventas/${id}`, {
-            method: "DELETE"
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return {
-                success: true,
-                data: data
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.del(`/api/ventas/${id}`);
     } catch (error) {
         console.error("Error al eliminar venta:", error);
         return {

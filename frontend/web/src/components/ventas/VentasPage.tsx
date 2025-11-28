@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { ShoppingCart, Plus, Search, Eye, Trash2, ArrowLeft, DollarSign } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { getVentas, deleteVenta } from "@/services/VentasService"
+import { fetchData } from "@/lib/fetchData"
+import { performDelete } from "@/lib/performDelete"
 import type { Venta } from "@/types/ventas"
 import VentasModal from "@/components/ventas/VentasModal"
 
@@ -19,17 +21,8 @@ export default function VentasPageContent() {
     const filteredVentas = ventas.filter((venta) => venta.cliente.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const fetchVentas = async () => {
-        setLoading(true)
-        const result = await getVentas()
-
-        if (result && result.success) {
-            setVentas(result.data.data)
-            setError("")
-        } else {
-            console.error("Error: No se pudo obtener respuesta del servicio.")
-            setVentas([])
-        }
-        setLoading(false)
+        setError("")
+        fetchData(getVentas, setVentas, "ventas", setLoading)
     }
 
     useEffect(() => {
@@ -37,18 +30,7 @@ export default function VentasPageContent() {
     }, [])
 
     const handleDelete = async (id_venta: string) => {
-        if (!window.confirm("¿Estas seguro de que quieres eliminar esta venta ?")) {
-            return
-        }
-        const result = await deleteVenta(id_venta)
-
-        if (result && result.success) {
-            fetchVentas()
-        } else if (result) {
-            console.error("Error al eliminar:", result.errorMessage)
-        } else {
-            console.error("Error: No se puede obtener respuesta del servicio al eliminar ")
-        }
+        await performDelete(deleteVenta, id_venta, fetchVentas, { confirmMessage: "¿Estas seguro de que quieres eliminar esta venta ?" })
     }
     return (
         <div className="min-h-screen bg-background p-6">

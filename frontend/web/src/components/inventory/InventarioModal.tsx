@@ -6,6 +6,7 @@ import { X, Package, MapPin, Hash, Plus, Minus } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createInventario, updateInventario } from "@/services/InventoryService"
 import { getLotes } from "@/services/TraceabilityService"
+import { fetchData } from "@/lib/fetchData"
 import type { Lote } from "@/types/traceability"
 
 type InventarioModalProps = {
@@ -26,17 +27,7 @@ export default function InventarioModal({ open, onClose, inventario, onSuccess }
     const [lotes, setLotes] = useState<Lote[]>([])
 
     useEffect(() => {
-        async function fetchData() {
-            const lotes = await getLotes()
-
-            if (!lotes?.success) {
-                console.error("Error al obtener datos de lotes:", lotes?.errorMessage)
-            }
-
-            setLotes(lotes?.data || [])
-        }
-
-        fetchData()
+        fetchData(getLotes, setLotes, "lotes")
     }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {

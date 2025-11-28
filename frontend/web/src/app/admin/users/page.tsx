@@ -4,6 +4,8 @@ import { Users, Search, UserPlus, Edit, Trash2, Shield, User, Loader2, ArrowLeft
 import Link from "next/link"
 import { useState, useEffect, useMemo } from "react"
 import { getUsers, deleteUser } from "@/services/UsersService" // Importar la función de servicio
+import { fetchData } from "@/lib/fetchData"
+import { performDelete } from "@/lib/performDelete"
 
 // Definición de tipos para la data mapeada
 interface UserData {
@@ -33,7 +35,6 @@ interface ApiUser {
         descripcion: string;
     };
 }
-
 
 // Función para mapear el nombre del rol del API a la clave interna del componente para los colores
 const getInternalRoleKey = (apiRoleName: string): string => {
@@ -74,28 +75,12 @@ export default function UsersPage() {
     const [error, setError] = useState<string | null>(null)
 
     const fetchUsers = async () => {
-            setIsLoading(true)
-            setError(null)
-            try {
-                const result = await getUsers()
-
-                if (result && result.success && Array.isArray(result.data.data)) {
-                    const mappedUsers = mapApiUsersToComponent(result.data.data as ApiUser[])
-                    setUsers(mappedUsers)
-                } else if (result) {
-                    setError(result.errorMessage || "Error desconocido al cargar usuarios.")
-                    setUsers([]) // Limpiar lista en caso de error
-                } else {
-                    setError("No se recibió respuesta del servicio de usuarios.")
-                    setUsers([])
-                }
-            } catch (err) {
-                setError("No se pudo conectar al servicio de usuarios.")
-                setUsers([])
-            } finally {
-                setIsLoading(false)
-            }
-        }
+        setError(null)
+        fetchData(getUsers, setUsers, "usuarios", setIsLoading, (payload: any) => {
+            if (Array.isArray(payload)) return mapApiUsersToComponent(payload as ApiUser[])
+            return []
+        })
+    }
 
 
     // Lógica para cargar los usuarios
@@ -104,12 +89,7 @@ export default function UsersPage() {
     }, [])
 
     const handleDelete = async (id: string) => {
-        const result = await deleteUser(id)
-        if (result && result.success) {
-            fetchUsers()
-        } else {
-            console.error("Error al eliminar usuario:", result?.errorMessage)
-        }
+        await performDelete(deleteUser, id, fetchUsers)
     }
 
 
@@ -267,7 +247,9 @@ export default function UsersPage() {
                                                 <button className="p-2 text-stone-600 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800 rounded-lg transition-colors">
                                                     <Edit className="w-4 h-4" />
                                                 </button>
-                                                <button className="p-2 text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/30 rounded-lg transition-colors">
+                                                <button 
+                                                onClick={() => handleDelete(user.id)}
+                                                className="p-2 text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-900/30 rounded-lg transition-colors">
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>

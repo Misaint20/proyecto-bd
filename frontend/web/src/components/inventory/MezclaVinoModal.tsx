@@ -6,6 +6,7 @@ import { X, Droplets, Wine, Percent } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createMezclaVino, updateMezclaVino, getVarietales } from "@/services/MastersService"
 import { getVinos } from "@/services/VinosService"
+import { fetchData } from "@/lib/fetchData"
 import type { Vino } from "@/types/vino"
 import type { Varietal } from "@/types/masters"
 
@@ -27,18 +28,8 @@ export default function MezclaVinoModal({ open, onClose, mezcla, onSuccess }: Me
     const [varietales, setVarietales] = useState<Varietal[]>([])
 
     useEffect(() => {
-        async function fetchData() {
-            const vinos = await getVinos()
-            const varietales = await getVarietales()
-
-            if (!vinos?.success && !varietales?.success) {
-                console.error("Error al obtener datos de vinos y varietales:", vinos?.errorMessage || varietales?.errorMessage)
-            }
-
-            setVinos(vinos?.data || [])
-            setVarietales(varietales?.data.data || [])
-        }
-        fetchData()
+        fetchData(getVinos, setVinos, "vinos")
+        fetchData(getVarietales, setVarietales, "varietales")
     }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {

@@ -33,6 +33,8 @@ import { Vinedo, Varietal, Barrica, MezclaVino } from "@/types/masters"
 import { Inventario } from "@/types/inventory";
 import { getVinedos, getVarietales, getBarricas, getMezclasVino, deleteBarrica, deleteMezclaVino, deleteVinedo, deleteVarietal } from "@/services/MastersService";
 import { getInventario, deleteInventario } from "@/services/InventoryService";
+import { fetchData } from "@/lib/fetchData";
+import { performDelete } from "@/lib/performDelete"
 
 export default function InventoryPage() {
     const [activeTab, setActiveTab] = useState<"vinedos" | "varietales" | "barricas" | "inventario" | "mezclas">(
@@ -53,25 +55,6 @@ export default function InventoryPage() {
     const [barricas, setBarricas] = useState<Barrica[]>([])
     const [inventarios, setInventarios] = useState<Inventario[]>([])
     const [mezclas, setMezclas] = useState<MezclaVino[]>([])
-
-    const fetchData = async (apiCall: any, setter: any, dataName = "datos") => {
-        try {
-            const result = await apiCall();
-
-            if (result && result.success) {
-                setter(result.data.data);
-            } else if (result) {
-                console.error(`Error al obtener ${dataName}: ${result.errorMessage}`);
-                setter([]);
-            } else {
-                console.error(`Error: No se pudo obtener respuesta del servicio para ${dataName}.`);
-                setter([]);
-            }
-        } catch (error) {
-            console.error(`Error inesperado al intentar obtener ${dataName}:`, error);
-            setter([]);
-        }
-    };
 
     useEffect(() => {
         fetchData(getVinedos, setVinedos, "Viñedos");
@@ -99,20 +82,8 @@ export default function InventoryPage() {
         if (type === "mezclas") setMezclaModalOpen(true)
     }
 
-    const handleDelete = async (id: string, deleter: any) => {
-        if (!window.confirm("¿Estás seguro de que quieres eliminar este registro?")) {
-            return
-        }
-
-        const result = await deleter(id)
-
-        if (result && result.success) {
-            fetchData(getInventario, setInventarios, "Inventario")
-        } else if (result) {
-            console.error("Error al eliminar:", result.errorMessage)
-        } else {
-            console.error("Error: No se pudo obtener respuesta del servicio al eliminar.")
-        }
+    const handleDelete = async (id: string, deleter: any, onSuccess?: () => void) => {
+        await performDelete(deleter, id, onSuccess)
     }
 
     const tabs = [
@@ -322,10 +293,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => {
-                                                            handleDelete(vinedo.id_vinedo, deleteVinedo)
-                                                            fetchData(getVinedos, setVinedos, "Viñedos")
-                                                        }}
+                                                        onClick={() => handleDelete(vinedo.id_vinedo, deleteVinedo, () => fetchData(getVinedos, setVinedos, "Viñedos"))}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
@@ -373,10 +341,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => {
-                                                            handleDelete(varietal.id_varietal, deleteVarietal)
-                                                            fetchData(getVarietales, setVarietales, "Varietales")
-                                                        }}
+                                                        onClick={() => handleDelete(varietal.id_varietal, deleteVarietal, () => fetchData(getVarietales, setVarietales, "Varietales"))}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
@@ -442,10 +407,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => {
-                                                            handleDelete(barrica.id_barrica, deleteBarrica)
-                                                            fetchData(getBarricas, setBarricas, "Barricas")
-                                                        }}
+                                                        onClick={() => handleDelete(barrica.id_barrica, deleteBarrica, () => fetchData(getBarricas, setBarricas, "Barricas"))}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
@@ -505,10 +467,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => {
-                                                            handleDelete(inventario.id_inventario, deleteInventario)
-                                                            fetchData(getInventario, setInventarios, "Inventario")
-                                                        }}
+                                                        onClick={() => handleDelete(inventario.id_inventario, deleteInventario, () => fetchData(getInventario, setInventarios, "Inventario"))}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
@@ -566,10 +525,7 @@ export default function InventoryPage() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        onClick={() => {
-                                                            handleDelete(mezcla.id_mezcla, deleteMezclaVino)
-                                                            fetchData(getMezclasVino, setMezclas, "Mezclas")
-                                                        }}
+                                                        onClick={() => handleDelete(mezcla.id_mezcla, deleteMezclaVino, () => fetchData(getMezclasVino, setMezclas, "Mezclas"))}
                                                         className="hover:bg-red-100 dark:hover:bg-red-900/20 hover:text-red-600"
                                                     >
                                                         <Trash2 className="h-3 w-3 md:h-4 md:w-4" />

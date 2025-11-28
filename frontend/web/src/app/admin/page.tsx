@@ -5,32 +5,13 @@ import { Users, TrendingUp, Package, UserPlus, FileText, Settings, Wine, Activit
 import Link from "next/link"
 import { getUsers } from "@/services/UsersService"
 import { getInventario } from "@/services/InventoryService"
+import { fetchData } from "@/lib/fetchData"
 
 export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [totalUsers, setTotalUsers] = useState(0)
   const [inventario, setInventario] = useState<any[]>([])
-
-  const fetchData = async (apiCall: any, setter: any, dataName = "datos") => {
-    try {
-      const result = await apiCall();
-
-      if (result && result.success) {
-        setter(result.data.data);
-      } else if (result) {
-        console.error(`Error al obtener ${dataName}: ${result.errorMessage}`);
-        setter([]);
-      } else {
-        console.error(`Error: No se pudo obtener respuesta del servicio para ${dataName}.`);
-        setter([]);
-      }
-    } catch (error) {
-      // Captura errores de red o errores lanzados por apiCall antes del manejo de la respuesta 'result'
-      console.error(`Error inesperado al intentar obtener ${dataName}:`, error);
-      setter([]);
-    }
-  };
 
   useEffect(() => {
     fetchData(getUsers, (data: any[]) => setTotalUsers(data.length), "usuarios");

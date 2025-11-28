@@ -1,48 +1,19 @@
+import api from "@/lib/apiClient";
+
 const API_ROUTE_URL = "/api/users";
 
 export async function getUsers() {
-    const response = await fetch(API_ROUTE_URL, {
-        method: "GET",
-    });
-    if (response.ok) {
-        const data = await response.json();
-        return {
-            success: true,
-            data: data
-        }
-    } else if (response.status === 401) {
-        return {
-            success: false,
-            errorMessage: "No tienes permisos para acceder a este recurso"
-        }
-    }
+    return api.get(API_ROUTE_URL);
 }
 
 export const getRoles = async () => {
     try {
-        const response = await fetch(API_ROUTE_URL + "/roles", {
-            method: "GET",
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return {
-                success: true,
-                data: data
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.get(API_ROUTE_URL + "/roles");
     } catch (error) {
         console.error("Error al obtener roles:", error);
-        return {
-            success: false,
-            errorMessage: "Error al obtener roles"
-        }
+        return { success: false, errorMessage: "Error al obtener roles" };
     }
-}
+};
 
 interface NewUserData {
     name: string;
@@ -62,30 +33,23 @@ interface RoleApi {
 }
 
 export async function createUser(userData: NewUserData) {
-
     const rolesResult = await getRoles();
 
     if (!rolesResult?.success) {
-        // Si falla la obtención de roles, detenemos el proceso
         return {
             success: false,
-            errorMessage: rolesResult?.errorMessage || "Fallo al obtener la lista de roles del backend."
-        }
+            errorMessage: rolesResult?.errorMessage || "Fallo al obtener la lista de roles del backend.",
+        };
     }
 
-    const rolesList: RoleApi[] = rolesResult.data;
-
-    // 2. BUSCAR EL ID DEL ROL POR SU NOMBRE
-    // La comparación debe ser estricta para asegurar que el nombre coincida exactamente con el de la API
-    const matchingRole = rolesList.find(
-        (role) => role.nombre === userData.role
-    );
+    const rolesList: RoleApi[] = rolesResult.data as RoleApi[];
+    const matchingRole = rolesList.find((role) => role.nombre === userData.role);
 
     if (!matchingRole) {
         return {
             success: false,
-            errorMessage: `Rol no encontrado: El nombre de rol '${userData.role}' no existe en el backend.`
-        }
+            errorMessage: `Rol no encontrado: El nombre de rol '${userData.role}' no existe en el backend.`,
+        };
     }
 
     userData.role = matchingRole.id_rol;
@@ -100,80 +64,27 @@ export async function createUser(userData: NewUserData) {
     };
 
     try {
-        const response = await fetch(API_ROUTE_URL, {
-            method: "POST",
-            body: JSON.stringify(postBody),
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return {
-                success: true,
-                data: data
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.post(API_ROUTE_URL, postBody);
     } catch (error) {
         console.error("Error al crear usuario:", error);
-        return {
-            success: false,
-            errorMessage: "Error al crear usuario"
-        }
+        return { success: false, errorMessage: "Error al crear usuario" };
     }
 }
 
 export async function updateUser(id: string, userData: UpdateUserData) {
     try {
-        const response = await fetch(`${API_ROUTE_URL}/${id}`, {
-            method: "PATCH",
-            body: JSON.stringify(userData),
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return {
-                success: true,
-                data: data
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.patch(`${API_ROUTE_URL}/${id}`, userData);
     } catch (error) {
         console.error("Error al actualizar usuario:", error);
-        return {
-            success: false,
-            errorMessage: "Error al actualizar usuario"
-        }
+        return { success: false, errorMessage: "Error al actualizar usuario" };
     }
 }
 
 export async function deleteUser(id: string) {
     try {
-        const response = await fetch(`${API_ROUTE_URL}/${id}`, {
-            method: "DELETE",
-        });
-        if (response.ok) {
-            const data = await response.json();
-            return {
-                success: true,
-                data: data
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.del(`${API_ROUTE_URL}/${id}`);
     } catch (error) {
         console.error("Error al eliminar usuario:", error);
-        return {
-            success: false,
-            errorMessage: "Error al eliminar usuario"
-        }
+        return { success: false, errorMessage: "Error al eliminar usuario" };
     }
 }

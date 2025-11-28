@@ -20,5 +20,4 @@ router.get('/', authorizeRoles(RolNombre.Administrador), VentasController.getVen
 // Eliminar una venta (Acceso para reportes)
 router.delete('/:id', authorizeRoles(RolNombre.Administrador), VentasController.deleteVenta);
 
-
 export default router;
