@@ -98,3 +98,80 @@ export const getReporteVentasPorPeriodo = async (startDate: string, endDate: str
         }))
     };
 };
+
+/**
+ * Reporte 3: Obtiene las ventas del mes actual y porcentaje de cambio vs mes anterior.
+ * Actor: Administrador.
+ */
+export const getVentasMesActual = async () => {
+    logger.info('Generando reporte de ventas del mes actual.', { context: 'ReportesService' });
+
+    const hoy = new Date();
+    const primerDiaActual = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    const ultimoDiaActual = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+
+    // Primer y último día del mes anterior
+    const primerDiaAnterior = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
+    const ultimoDiaAnterior = new Date(hoy.getFullYear(), hoy.getMonth(), 0);
+
+    // Ventas del mes actual
+    const ventasActuales = await prisma.venta.findMany({
+        where: {
+            fecha_venta: {
+                gte: primerDiaActual,
+                lte: ultimoDiaActual,
+            }
+        },
+        include: { Detalle_Venta: true }
+    });
+
+    // Ventas del mes anterior
+    const ventasAnteriores = await prisma.venta.findMany({
+        where: {
+            fecha_venta: {
+                gte: primerDiaAnterior,
+                lte: ultimoDiaAnterior,
+            }
+        },
+        include: { Detalle_Venta: true }
+    });
+
+    // Calcular totales mes actual
+    let totalActual = 0;
+    let botellasActual = 0;
+    ventasActuales.forEach(venta => {
+        venta.Detalle_Venta.forEach(detalle => {
+            totalActual += detalle.subtotal.toNumber();
+            botellasActual += detalle.cantidad;
+        });
+    });
+
+    // Calcular totales mes anterior
+    let totalAnterior = 0;
+    let botellasAnterior = 0;
+    ventasAnteriores.forEach(venta => {
+        venta.Detalle_Venta.forEach(detalle => {
+            totalAnterior += detalle.subtotal.toNumber();
+            botellasAnterior += detalle.cantidad;
+        });
+    });
+
+    // Calcular porcentajes de cambio
+    const porcentajeCambio = totalAnterior === 0 ? 100 : ((totalActual - totalAnterior) / totalAnterior) * 100;
+    const porcentajeBotella = botellasAnterior === 0 ? 100 : ((botellasActual - botellasAnterior) / botellasAnterior) * 100;
+
+    return {
+        mes_actual: {
+            total_ventas: totalActual,
+            total_botellas: botellasActual,
+            numero_transacciones: ventasActuales.length,
+        },
+        mes_anterior: {
+            total_ventas: totalAnterior,
+            total_botellas: botellasAnterior,
+            numero_transacciones: ventasAnteriores.length,
+        },
+        cambio_porcentaje: Math.round(porcentajeCambio * 100) / 100,
+        cambio_botellas_porcentaje: Math.round(porcentajeBotella * 100) / 100,
+    };
+};

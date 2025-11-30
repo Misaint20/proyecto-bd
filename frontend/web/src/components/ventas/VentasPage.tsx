@@ -9,7 +9,8 @@ import { fetchData } from "@/lib/fetchData"
 import { performDelete } from "@/lib/performDelete"
 import type { Venta } from "@/types/ventas"
 const VentasModal = dynamic(() => import('@/components/ventas/VentasModal'), { ssr: false })
-import { showAlert } from "@/lib/alert"
+const VentasDetailModal = dynamic(() => import('@/components/ventas/VentasDetailModal'), { ssr: false })
+import Link from "next/link"
 
 export default function VentasPageContent() {
     const router = useRouter()
@@ -19,6 +20,8 @@ export default function VentasPageContent() {
     const [error, setError] = useState("")
     const [searchTerm, setSearchTerm] = useState("")
     const [showModal, setShowModal] = useState(false)
+    const [detailVentaId, setDetailVentaId] = useState<string | null>(null)
+    const [showDetailModal, setShowDetailModal] = useState(false)
 
     const filteredVentas = ventas.filter((venta) => venta.cliente.toLowerCase().includes(searchTerm.toLowerCase()))
 
@@ -39,12 +42,12 @@ export default function VentasPageContent() {
             <div className="mb-8 bg-gradient-to-r from-[#5e2129] via-[#7d2b35] to-[#8b7355] p-8 rounded-2xl shadow-xl animate-in slide-in-from-top duration-300">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => router.push("/admin")}
+                        <Link
+                            href='/'
                             className="bg-white/20 p-3 rounded-xl backdrop-blur-sm hover:bg-white/30 transition-all hover:scale-105"
                         >
                             <ArrowLeft className="w-6 h-6 text-white" />
-                        </button>
+                        </Link>
                         <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
                             <DollarSign className="w-8 h-8 text-white" />
                         </div>
@@ -136,7 +139,7 @@ export default function VentasPageContent() {
 
                             <div className="flex gap-2">
                                 <button
-                                    onClick={() => showAlert({ description: "Funcionalidad próximamente" })}
+                                    onClick={() => { setDetailVentaId(venta.id_venta); setShowDetailModal(true) }}
                                     className="flex-1 bg-gradient-to-r from-[#5e2129] to-[#7d2b35] text-white px-4 py-2.5 rounded-lg hover:from-[#7d2b35] hover:to-[#8b3d47] transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-md"
                                 >
                                     <Eye className="w-4 h-4" />
@@ -162,6 +165,12 @@ export default function VentasPageContent() {
                         fetchVentas()
                         setShowModal(false)
                     }}
+                />
+            )}
+            {showDetailModal && detailVentaId && (
+                <VentasDetailModal
+                    ventaId={detailVentaId}
+                    onClose={() => { setShowDetailModal(false); setDetailVentaId(null); }}
                 />
             )}
         </div>

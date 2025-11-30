@@ -43,3 +43,18 @@ export const getReporteVentasPorPeriodo = async (req: Request, res: Response, ne
         next(error);
     }
 };
+
+/**
+ * GET /api/reportes/ventas/mes-actual
+ * Muestra las ventas del mes actual y comparación vs mes anterior.
+ * Actor: Administrador.
+ */
+export const getVentasMesActual = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const reporte = await ReportesService.getVentasMesActual();
+        return res.status(200).json({ message: 'Reporte de Ventas Mes Actual (RF03).', data: reporte });
+    } catch (error) {
+        logger.error('Error al generar reporte de ventas del mes actual.', { context: 'ReportesController', error });
+        next(error);
+    }
+};
