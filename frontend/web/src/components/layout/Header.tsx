@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { logout } from "@/lib/logout"
+import api from "@/lib/apiClient"
+import userStore from "@/lib/userStore"
 import Image from "next/image"
 
 export function Header() {
@@ -21,13 +23,21 @@ export function Header() {
     const [userRole, setUserRole] = React.useState("Role")
 
     React.useEffect(() => {
-        // Obtener información del usuario desde localStorage
-        const storedUser = localStorage.getItem("user")
-        if (storedUser) {
-            const user = JSON.parse(storedUser)
-            setUserName(user.nombre || "Usuario")
-            setUserRole(user.role || "Role")
-        }
+        let mounted = true
+
+        // Subscribe to userStore updates so Header refreshes on login/logout
+        const unsubscribe = userStore.subscribe((u) => {
+            if (!mounted) return
+            if (u) {
+                setUserName(u.nombre || u.username || 'Usuario')
+                setUserRole(u.role || 'Role')
+            } else {
+                setUserName('Usuario')
+                setUserRole('Role')
+            }
+        })
+
+        return () => { mounted = false; unsubscribe() }
     }, [])
 
     const handleLogout = () => {

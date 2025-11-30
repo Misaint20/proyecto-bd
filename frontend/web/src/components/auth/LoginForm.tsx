@@ -5,6 +5,8 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, User, Lock, LogIn } from "lucide-react"
 import { login, getDashboardPath } from "@/services/AuthService"
+import { showAlert } from "@/lib/alert"
+import userStore from '@/lib/userStore'
 
 export default function LoginForm() {
   const [username, setUsername] = useState("")
@@ -12,19 +14,20 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (username && password) {
-      login(username, password).then(result => {
-        if (result.success && result.user?.role) {
-          router.push(getDashboardPath(result.user.role))
-        } else {
-          alert(result.errorMessage)
-        }
-      })
+      const result = await login(username, password)
+      if (result.success && result.user?.role) {
+        // Update client user store so Header updates without reload
+        userStore.setUser(result.user)
+        router.push(getDashboardPath(result.user.role))
+      } else {
+        await showAlert({ description: result.errorMessage ?? "Error al iniciar sesión" })
+      }
     } else {
-      alert("Por favor completa todos los campos")
+      await showAlert({ description: "Por favor completa todos los campos" })
     }
   }
 

@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Header } from "@/components/layout/Header"
+import { InitializeAuth } from "@/components/InitializeAuth"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -23,6 +24,7 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className={`font-sans antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <InitializeAuth />
           <Header />
           {children}
         </ThemeProvider>

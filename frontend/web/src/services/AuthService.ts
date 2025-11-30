@@ -16,7 +16,6 @@ export async function login(username: string, password: string): Promise<LoginRe
     if (res.success) {
         // `res.data` expected to contain `{ user, ... }`
         const user = res.data?.user;
-        if (user) localStorage.setItem('user', JSON.stringify(user));
         return { success: true, user };
     }
 

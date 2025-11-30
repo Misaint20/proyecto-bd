@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { Wine, Plus, Search, Edit, Trash2, ArrowLeft, Package, DollarSign, Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
-import VinoModal from "@/components/vinos/VinosModal"
+import dynamic from 'next/dynamic'
+const VinoModal = dynamic(() => import('@/components/vinos/VinosModal'), { ssr: false })
 import { getVinos, deleteVino } from "@/services/VinosService"
 import { getInventario } from "@/services/InventoryService"
 import { fetchData } from "@/lib/fetchData"

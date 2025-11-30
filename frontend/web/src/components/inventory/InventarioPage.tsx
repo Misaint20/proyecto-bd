@@ -24,11 +24,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import VinedoModal from "@/components/inventory/VinedoModal"
-import VarietalModal from "@/components/inventory/VarietalModal"
-import BarricaModal from "@/components/inventory/BarricaModal"
-import InventarioModal from "@/components/inventory/InventarioModal"
-import MezclaVinoModal from "@/components/inventory/MezclaVinoModal"
+import dynamic from 'next/dynamic'
+const VinedoModal = dynamic(() => import('@/components/inventory/VinedoModal'), { ssr: false })
+const VarietalModal = dynamic(() => import('@/components/inventory/VarietalModal'), { ssr: false })
+const BarricaModal = dynamic(() => import('@/components/inventory/BarricaModal'), { ssr: false })
+const InventarioModal = dynamic(() => import('@/components/inventory/InventarioModal'), { ssr: false })
+const MezclaVinoModal = dynamic(() => import('@/components/inventory/MezclaVinoModal'), { ssr: false })
 import { Vinedo, Varietal, Barrica, MezclaVino } from "@/types/masters"
 import { Inventario } from "@/types/inventory";
 import { getVinedos, getVarietales, getBarricas, getMezclasVino, deleteBarrica, deleteMezclaVino, deleteVinedo, deleteVarietal } from "@/services/MastersService";

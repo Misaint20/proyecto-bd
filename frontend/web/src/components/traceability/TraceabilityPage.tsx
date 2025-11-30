@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Plus, Search, Edit, Trash2, Grape, Package, Settings, ClipboardCheck, Wine, Droplet, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import CosechaModal from "@/components/traceability/CosechaModal"
-import LoteModal from "@/components/traceability/LoteModal"
-import ProcesoProduccionModal from "@/components/traceability/ProcesoProduccionModal"
-import ControlCalidadModal from "@/components/traceability/ControlCalidadModal"
+import dynamic from 'next/dynamic'
+const CosechaModal = dynamic(() => import('@/components/traceability/CosechaModal'), { ssr: false })
+const LoteModal = dynamic(() => import('@/components/traceability/LoteModal'), { ssr: false })
+const ProcesoProduccionModal = dynamic(() => import('@/components/traceability/ProcesoProduccionModal'), { ssr: false })
+const ControlCalidadModal = dynamic(() => import('@/components/traceability/ControlCalidadModal'), { ssr: false })
 import { getLotes, getControlCalidad, getCosechas, getProcesosProduccion, deleteControlCalidad, deleteCosecha, deleteLote, deleteProcesoProduccion } from "@/services/TraceabilityService"
 import { fetchData } from "@/lib/fetchData"
 import { performDelete } from "@/lib/performDelete"

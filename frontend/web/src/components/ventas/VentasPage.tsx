@@ -1,13 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import dynamic from 'next/dynamic'
 import { ShoppingCart, Plus, Search, Eye, Trash2, ArrowLeft, DollarSign } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { getVentas, deleteVenta } from "@/services/VentasService"
 import { fetchData } from "@/lib/fetchData"
 import { performDelete } from "@/lib/performDelete"
 import type { Venta } from "@/types/ventas"
-import VentasModal from "@/components/ventas/VentasModal"
+const VentasModal = dynamic(() => import('@/components/ventas/VentasModal'), { ssr: false })
+import { showAlert } from "@/lib/alert"
 
 export default function VentasPageContent() {
     const router = useRouter()
@@ -134,7 +136,7 @@ export default function VentasPageContent() {
 
                             <div className="flex gap-2">
                                 <button
-                                    onClick={() => alert("Funcionalidad próximamente")}
+                                    onClick={() => showAlert({ description: "Funcionalidad próximamente" })}
                                     className="flex-1 bg-gradient-to-r from-[#5e2129] to-[#7d2b35] text-white px-4 py-2.5 rounded-lg hover:from-[#7d2b35] hover:to-[#8b3d47] transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-md"
                                 >
                                     <Eye className="w-4 h-4" />

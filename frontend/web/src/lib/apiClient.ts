@@ -8,10 +8,41 @@ const defaultHeaders: Record<string, string> = {
     "Content-Type": "application/json",
 };
 
+// Simple in-memory GET cache
+const getCache = new Map<string, { ts: number; data: any }>();
+const DEFAULT_CACHE_TTL = parseInt(process.env.NEXT_PUBLIC_API_CACHE_TTL || '') || 30_000; // 30s default, override with NEXT_PUBLIC_API_CACHE_TTL
+
 async function request<T = any>(url: string, options: RequestInit = {}): Promise<ApiResult<T>> {
+    // options supports: timeout (ms), useCache (boolean)
+    const timeout = (options as any).timeout ?? 10000;
+    const useCache = (options as any).useCache !== undefined ? (options as any).useCache : true;
+
     try {
         const headers = { ...(options.headers || {}), ...defaultHeaders } as Record<string, string>;
-        const response = await fetch(url, { ...options, headers });
+
+        const method = (options.method || 'GET').toUpperCase();
+
+        // GET cache
+        if (method === 'GET' && useCache) {
+            const cached = getCache.get(url);
+            if (cached && Date.now() - cached.ts < DEFAULT_CACHE_TTL) {
+                return { success: true, data: cached.data };
+            }
+        }
+
+        const controller = new AbortController();
+        const signal = (options as any).signal || controller.signal;
+        const fetchOptions: RequestInit = {
+            ...options,
+            headers,
+            signal,
+            credentials: (options as any).credentials ?? 'include', // include cookies by default
+        };
+
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+        const response = await fetch(url, fetchOptions);
+        clearTimeout(timeoutId);
 
         if (response.ok) {
             let parsed: any = null;
@@ -20,9 +51,16 @@ async function request<T = any>(url: string, options: RequestInit = {}): Promise
             } catch (_) {
                 parsed = null;
             }
+
+            const data = parsed?.data ?? parsed;
+
+            if (method === 'GET' && useCache) {
+                getCache.set(url, { ts: Date.now(), data });
+            }
+
             return {
                 success: true,
-                data: parsed?.data ?? parsed,
+                data,
             };
         }
 
@@ -37,7 +75,10 @@ async function request<T = any>(url: string, options: RequestInit = {}): Promise
             text = "Error en la petición al servidor";
         }
         return { success: false, errorMessage: text || "Error en la petición al servidor" };
-    } catch (error) {
+    } catch (error: any) {
+        if (error?.name === 'AbortError') {
+            return { success: false, errorMessage: 'La petición fue cancelada o excedió el tiempo de espera' };
+        }
         console.error("API request error:", error);
         return { success: false, errorMessage: "Error en la conexión con el servidor" };
     }
