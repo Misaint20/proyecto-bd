@@ -32,10 +32,11 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
     const fetchVinosDisponibles = async () => {
         const result = await getInventario()
 
-        if (result && result.success) {
-            setVinosDisponibles(result.data.data)
+        if (result && result.success && Array.isArray(result.data)) {
+            setVinosDisponibles(result.data)
         } else {
             setError("Error al cargar los vinos")
+            setVinosDisponibles([])
         }
     }
 
@@ -173,7 +174,7 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
                                     className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5e2129] dark:focus:ring-[#d4a574] transition-all text-foreground"
                                 >
                                     <option value="">Selecciona un vino...</option>
-                                    {vinosDisponibles.map((vino) => (
+                                    {(vinosDisponibles || []).map((vino) => (
                                         <option key={vino.Lote.Vino.id_vino} value={vino.Lote.Vino.id_vino}>
                                             {vino.Lote.Vino.nombre} - {vino.Lote.Vino.tipo} - ${vino.Lote.Vino.precio_botella}
                                         </option>
