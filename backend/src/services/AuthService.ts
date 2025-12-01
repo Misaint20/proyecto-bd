@@ -47,3 +47,22 @@ export const login = async (username: string, pass: string): Promise<{ user: Aut
         access_token: accessToken,
     };
 };
+
+/**
+ * Verifica un token JWT y devuelve el payload si es válido.
+ */
+export const verifyToken = async (token: string): Promise<JwtPayload | null> => {
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as any;
+        // Aseguramos que tenga las propiedades esperadas
+        if (!decoded || !decoded.sub) return null;
+        return {
+            sub: decoded.sub,
+            username: decoded.username,
+            role: decoded.role,
+        };
+    } catch (err) {
+        logger.warn('Token verification failed', { context: 'AuthService' });
+        return null;
+    }
+};

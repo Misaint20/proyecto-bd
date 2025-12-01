@@ -15,10 +15,11 @@ router.use(authenticateJWT);
 router.post('/registrar', authorizeRoles(RolNombre.Vendedor), VentasController.registerVenta);
 
 // Obtener todas las ventas (Acceso para reportes)
-router.get('/', authorizeRoles(RolNombre.Administrador), VentasController.getVentas);
+router.get('/', authorizeRoles(RolNombre.Vendedor), VentasController.getVentas);
+// Obtener una venta especifica con detalles
+router.get('/:id', authorizeRoles(RolNombre.Vendedor), VentasController.getVentaById);
 
 // Eliminar una venta (Acceso para reportes)
 router.delete('/:id', authorizeRoles(RolNombre.Administrador), VentasController.deleteVenta);
-
 
 export default router;

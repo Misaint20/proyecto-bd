@@ -55,6 +55,24 @@ export const getVentas = async (req: Request, res: Response, next: NextFunction)
 };
 
 /**
+ * Obtiene una venta especifica con sus detalles.
+ * Actor: Administrador, Vendedor.
+ */
+export const getVentaById = async (req: Request, res: Response, next: NextFunction) => {
+    const id: string = req.params.id;
+    
+    try {
+        const venta = await VentasService.findVentaById(id);
+        return res.status(200).json({ data: venta });
+    } catch (error) {
+        if (error instanceof Error && error.message.includes('no encontrada')) {
+            return next(new HttpError(error.message, 404));
+        }
+        next(error);
+    }
+};
+
+/**
  * Elimina una venta (Para reportes y auditoría).
  * Actor: Administrador, Vendedor.
  */

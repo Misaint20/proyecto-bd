@@ -6,11 +6,14 @@ import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Plus, Search, Edit, Trash2, Grape, Package, Settings, ClipboardCheck, Wine, Droplet, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import CosechaModal from "@/components/traceability/CosechaModal"
-import LoteModal from "@/components/traceability/LoteModal"
-import ProcesoProduccionModal from "@/components/traceability/ProcesoProduccionModal"
-import ControlCalidadModal from "@/components/traceability/ControlCalidadModal"
+import dynamic from 'next/dynamic'
+const CosechaModal = dynamic(() => import('@/components/traceability/CosechaModal'), { ssr: false })
+const LoteModal = dynamic(() => import('@/components/traceability/LoteModal'), { ssr: false })
+const ProcesoProduccionModal = dynamic(() => import('@/components/traceability/ProcesoProduccionModal'), { ssr: false })
+const ControlCalidadModal = dynamic(() => import('@/components/traceability/ControlCalidadModal'), { ssr: false })
 import { getLotes, getControlCalidad, getCosechas, getProcesosProduccion, deleteControlCalidad, deleteCosecha, deleteLote, deleteProcesoProduccion } from "@/services/TraceabilityService"
+import { fetchData } from "@/lib/fetchData"
+import { performDelete } from "@/lib/performDelete"
 
 
 type TabType = "cosechas" | "lotes" | "procesos" | "controles"
@@ -31,26 +34,6 @@ export default function TraceabilityPageComponent() {
 
     // Editing items
     const [editingItem, setEditingItem] = useState<any>(null)
-
-    const fetchData = async (apiCall: any, setter: any, dataName = "datos") => {
-        try {
-            const result = await apiCall();
-
-            if (result && result.success) {
-                if (!result.data.data) setter(result.data);
-                else setter(result.data.data);
-            } else if (result) {
-                console.error(`Error al obtener ${dataName}: ${result.errorMessage}`);
-                setter([]);
-            } else {
-                console.error(`Error: No se pudo obtener respuesta del servicio para ${dataName}.`);
-                setter([]);
-            }
-        } catch (error) {
-            console.error(`Error inesperado al intentar obtener ${dataName}:`, error);
-            setter([]);
-        }
-    };
 
     useEffect(() => {
         fetchData(getLotes, setLotes, "Lotes");
@@ -76,25 +59,19 @@ export default function TraceabilityPageComponent() {
     }
 
     const handleDelete = async (item: any, type: TabType) => {
-        if (confirm("¿Estás seguro de eliminar este registro?")) {
-            switch (type) {
-                case "cosechas":
-                    await deleteCosecha(item.id_cosecha)
-                    fetchData(getCosechas, setCosechas, "Cosechas")
-                    break
-                case "lotes":
-                    await deleteLote(item.id_lote)
-                    fetchData(getLotes, setLotes, "Lotes")
-                    break
-                case "procesos":
-                    await deleteProcesoProduccion(item.id_proceso)
-                    fetchData(getProcesosProduccion, setProcesos, "Procesos")
-                    break
-                case "controles":
-                    await deleteControlCalidad(item.id_control)
-                    fetchData(getControlCalidad, setControles, "Controles")
-                    break
-            }
+        switch (type) {
+            case "cosechas":
+                await performDelete(deleteCosecha, item.id_cosecha, () => fetchData(getCosechas, setCosechas, "Cosechas"), { confirmMessage: "¿Estás seguro de eliminar este registro?" })
+                break
+            case "lotes":
+                await performDelete(deleteLote, item.id_lote, () => fetchData(getLotes, setLotes, "Lotes"), { confirmMessage: "¿Estás seguro de eliminar este registro?" })
+                break
+            case "procesos":
+                await performDelete(deleteProcesoProduccion, item.id_proceso, () => fetchData(getProcesosProduccion, setProcesos, "Procesos"), { confirmMessage: "¿Estás seguro de eliminar este registro?" })
+                break
+            case "controles":
+                await performDelete(deleteControlCalidad, item.id_control, () => fetchData(getControlCalidad, setControles, "Controles"), { confirmMessage: "¿Estás seguro de eliminar este registro?" })
+                break
         }
     }
 

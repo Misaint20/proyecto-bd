@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { createUser } from "@/services/UsersService"
 import { UserPlus, User, Lock, Eye, EyeOff, Shield, ArrowLeft, Mail } from "lucide-react"
 import { Label } from "@/components/ui/label"
+import { showAlert } from "@/lib/alert"
 import Link from "next/link"
 
 export default function NewUserPage() {
@@ -59,13 +60,13 @@ export default function NewUserPage() {
         try {
             const result = await createUser({ ...formData, role: selectedRole })
             if (result?.success) {
-                alert("Usuario creado exitosamente")
+                await showAlert({ description: "Usuario creado exitosamente" })
                 router.push("/admin/users")
             } else {
-                alert("Error al crear el usuario: " + result?.errorMessage)
+                await showAlert({ description: "Error al crear el usuario: " + (result?.errorMessage ?? "") })
             }
         } catch (error: any) {
-            alert("Error al crear el usuario: " + error.message)
+            await showAlert({ description: "Error al crear el usuario: " + (error?.message ?? "") })
         }
     }
 

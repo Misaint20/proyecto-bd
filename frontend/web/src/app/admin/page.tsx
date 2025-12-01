@@ -5,36 +5,30 @@ import { Users, TrendingUp, Package, UserPlus, FileText, Settings, Wine, Activit
 import Link from "next/link"
 import { getUsers } from "@/services/UsersService"
 import { getInventario } from "@/services/InventoryService"
+import { getVentasMesActual } from "@/services/ReportesService"
+import { fetchData } from "@/lib/fetchData"
+import type { VentasMesActualReport } from "@/services/ReportesService"
 
 export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [totalUsers, setTotalUsers] = useState(0)
   const [inventario, setInventario] = useState<any[]>([])
-
-  const fetchData = async (apiCall: any, setter: any, dataName = "datos") => {
-    try {
-      const result = await apiCall();
-
-      if (result && result.success) {
-        setter(result.data.data);
-      } else if (result) {
-        console.error(`Error al obtener ${dataName}: ${result.errorMessage}`);
-        setter([]);
-      } else {
-        console.error(`Error: No se pudo obtener respuesta del servicio para ${dataName}.`);
-        setter([]);
-      }
-    } catch (error) {
-      // Captura errores de red o errores lanzados por apiCall antes del manejo de la respuesta 'result'
-      console.error(`Error inesperado al intentar obtener ${dataName}:`, error);
-      setter([]);
-    }
-  };
+  const [ventasMes, setVentasMes] = useState<VentasMesActualReport | null>(null)
 
   useEffect(() => {
     fetchData(getUsers, (data: any[]) => setTotalUsers(data.length), "usuarios");
     fetchData(getInventario, (data: any[]) => setInventario(data), "inventario");
+    
+    // Cargar datos de ventas del mes actual
+    const loadVentasMes = async () => {
+      const result = await getVentasMesActual();
+      if (result.success && result.data) {
+        setVentasMes(result.data);
+      }
+    };
+    loadVentasMes();
+    
     setIsLoading(false);
   }, []);
 
@@ -79,8 +73,13 @@ export default function AdminDashboard() {
               <h3 className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wide">
                 Ventas del Mes
               </h3>
-              <p className="text-3xl md:text-4xl font-bold text-accent mt-2 drop-shadow-sm">$45,230</p>
-              <p className="text-xs md:text-sm text-muted-foreground mt-1 font-medium">+12% vs mes anterior</p>
+              <p className="text-3xl md:text-4xl font-bold text-accent mt-2 drop-shadow-sm">
+                ${ventasMes?.mes_actual.total_ventas ? Number(ventasMes.mes_actual.total_ventas).toFixed(2) : "0.00"}
+              </p>
+              <p className="text-xs md:text-sm text-muted-foreground mt-1 font-medium">
+                {ventasMes?.cambio_porcentaje && ventasMes.cambio_porcentaje >= 0 ? "+" : ""}
+                {ventasMes?.cambio_porcentaje?.toFixed(2)}% vs mes anterior
+              </p>
             </div>
             <div className="p-3 md:p-4 rounded-xl bg-accent/15 group-hover:bg-accent/25 transition-all duration-300 border-2 border-accent/30 shadow-lg">
               <TrendingUp className="w-8 h-8 md:w-10 md:h-10 text-accent" />
@@ -174,6 +173,13 @@ export default function AdminDashboard() {
             >
               <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-primary" />
               Ventas
+            </Link>
+            <Link
+              href="/admin/ventas/reportes"
+              className="block w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-semibold text-sm md:text-base flex items-center gap-3 group border-2 border-border hover:border-primary/30"
+            >
+              <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-primary" />
+              Reportes de ventas
             </Link>
             <Link
               href="/admin/traceability"

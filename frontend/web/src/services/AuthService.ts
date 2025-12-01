@@ -1,37 +1,25 @@
-import { ROLE_ROUTE_MAP, UserRole } from '@/types/auth'; 
+import { ROLE_ROUTE_MAP, UserRole } from '@/types/auth';
+import api from '@/lib/apiClient';
+
 interface LoginResult {
     success: boolean;
     user?: {
         nombre: string;
         role: UserRole;
-    }
+    };
     errorMessage?: string;
 }
 
 export async function login(username: string, password: string): Promise<LoginResult> {
-    // Llamamos a nuestro API Route de Next.js que actúa como proxy
-    const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-    });
+    const res = await api.post('/api/auth/login', { username, password });
 
-    const data = await res.json();
-
-    if (res.ok) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        return {
-            success: true,
-            user: data.user
-        };
-    } else {
-        // El backend devolvió un error (ej: credenciales incorrectas, status 401)
-        return {
-            success: false,
-            errorMessage: data.message || 'Error de credenciales. Intenta de nuevo.'
-        };
+    if (res.success) {
+        // `res.data` expected to contain `{ user, ... }`
+        const user = res.data?.user;
+        return { success: true, user };
     }
+
+    return { success: false, errorMessage: res.errorMessage || 'Error de credenciales. Intenta de nuevo.' };
 }
 
 /**

@@ -1,22 +1,25 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { api } from "@/lib/apiClient";
+import userStore from '@/lib/userStore'
 
 export const logout = async () => {
     try {
-        const response = await fetch('/api/auth/logout', {
-            method: 'POST',
-        });
+        const result = await api.post('/api/auth/logout');
 
-        if (!response.ok) {
-            return NextResponse.json({ message: 'Error al cerrar sesión' }, { status: response.status });
+        // Clear client state regardless of backend result to update UI immediately
+        userStore.clearUser()
+
+        if (result && result.success) {
+            if (typeof window !== 'undefined') window.location.href = '/';
+            return { message: 'Sesión cerrada exitosamente' };
         }
 
-        if (response.status === 200) {
-            window.location.href = '/';
-            localStorage.removeItem("user");
-            return NextResponse.json({ message: 'Sesión cerrada exitosamente' }, { status: 200 });
-        }
-        
+        console.error('Error al cerrar sesión:', result?.errorMessage);
+        if (typeof window !== 'undefined') window.location.href = '/';
+        return { message: result?.errorMessage || 'Error al cerrar sesión' };
     } catch (error) {
         console.error('Error al cerrar sesión:', error);
+        userStore.clearUser()
+        if (typeof window !== 'undefined') window.location.href = '/';
+        return { message: 'Error al cerrar sesión' };
     }
 }

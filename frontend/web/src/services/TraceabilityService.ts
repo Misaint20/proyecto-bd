@@ -1,28 +1,12 @@
 import { Lote, ControlCalidad, ProcesoProduccion, Cosecha } from "@/types/traceability";
+import api from "@/lib/apiClient";
 
 export async function getLotes() {
     try {
-        const response = await fetch("/api/traceability/lotes", {
-            method: "GET",
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.get("/api/traceability/lotes");
     } catch (error) {
         console.error("Error al obtener lotes:", error);
-        return {
-            success: false,
-            errorMessage: "Error al obtener lotes"
-        }
+        return { success: false, errorMessage: "Error al obtener lotes" };
     }
 }
 
@@ -40,32 +24,10 @@ export async function createLote(loteData: NewLoteData) {
             ...loteData,
             fecha_embotellado: loteData.fecha_embotellado ? new Date(loteData.fecha_embotellado).toISOString() : null,
         }
-
-        const response = await fetch("/api/traceability/lotes", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.post("/api/traceability/lotes", body);
     } catch (error) {
         console.error("Error al crear lote:", error);
-        return {
-            success: false,
-            errorMessage: "Error al crear lote"
-        }
+        return { success: false, errorMessage: "Error al crear lote" };
     }
 }
 
@@ -75,57 +37,19 @@ export async function updateLote(id: string, loteData: UpdateLoteData) {
             ...loteData,
             fecha_embotellado: loteData.fecha_embotellado ? new Date(loteData.fecha_embotellado).toISOString() : null,
         }
-        const response = await fetch(`/api/traceability/lotes/${id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.patch(`/api/traceability/lotes/${id}`, body);
     } catch (error) {
         console.error("Error al actualizar lote:", error);
-        return {
-            success: false,
-            errorMessage: "Error al actualizar lote"
-        }
+        return { success: false, errorMessage: "Error al actualizar lote" };
     }
 }
 
 export async function deleteLote(id: string) {
     try {
-        const response = await fetch(`/api/traceability/lotes/${id}`, {
-            method: "DELETE"
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.del(`/api/traceability/lotes/${id}`);
     } catch (error) {
         console.error("Error al eliminar lote:", error);
-        return {
-            success: false,
-            errorMessage: "Error al eliminar lote"
-        }
+        return { success: false, errorMessage: "Error al eliminar lote" };
     }
 }
 
@@ -137,27 +61,10 @@ interface UpdateCosechaData extends Partial<NewCosechaData> { }
 
 export async function getCosechas() {
     try {
-        const response = await fetch("/api/traceability/cosecha", {
-            method: "GET",
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.get("/api/traceability/cosecha");
     } catch (error) {
         console.error("Error al obtener cosechas:", error);
-        return {
-            success: false,
-            errorMessage: "Error al obtener cosechas"
-        }
+        return { success: false, errorMessage: "Error al obtener cosechas" };
     }
 }
 
@@ -167,31 +74,10 @@ export async function createCosecha(cosechaData: NewCosechaData) {
             ...cosechaData,
             fecha_cosecha: cosechaData.fecha_cosecha ? new Date(cosechaData.fecha_cosecha).toISOString() : null,
         }
-        const response = await fetch("/api/traceability/cosecha", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.post("/api/traceability/cosecha", body);
     } catch (error) {
         console.error("Error al crear cosecha:", error);
-        return {
-            success: false,
-            errorMessage: "Error al crear cosecha"
-        }
+        return { success: false, errorMessage: "Error al crear cosecha" };
     }
 }
 
@@ -201,83 +87,28 @@ export async function updateCosecha(id: string, cosechaData: UpdateCosechaData) 
             ...cosechaData,
             fecha_cosecha: cosechaData.fecha_cosecha ? new Date(cosechaData.fecha_cosecha).toISOString() : null,
         }
-        const response = await fetch(`/api/traceability/cosecha/${id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.patch(`/api/traceability/cosecha/${id}`, body);
     } catch (error) {
         console.error("Error al actualizar cosecha:", error);
-        return {
-            success: false,
-            errorMessage: "Error al actualizar cosecha"
-        }
+        return { success: false, errorMessage: "Error al actualizar cosecha" };
     }
 }
 
 export async function deleteCosecha(id: string) {
     try {
-        const response = await fetch(`/api/traceability/cosecha/${id}`, {
-            method: "DELETE"
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.del(`/api/traceability/cosecha/${id}`);
     } catch (error) {
         console.error("Error al eliminar cosecha:", error);
-        return {
-            success: false,
-            errorMessage: "Error al eliminar cosecha"
-        }
+        return { success: false, errorMessage: "Error al eliminar cosecha" };
     }
 }
 
 export async function getControlCalidad() {
     try {
-        const response = await fetch("/api/traceability/calidad", {
-            method: "GET",
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.get("/api/traceability/calidad");
     } catch (error) {
         console.error("Error al obtener controles de calidad:", error);
-        return {
-            success: false,
-            errorMessage: "Error al obtener controles de calidad"
-        }
+        return { success: false, errorMessage: "Error al obtener controles de calidad" };
     }
 }
 
@@ -293,31 +124,10 @@ export async function createControlCalidad(controlCalidadData: NewControlCalidad
             ...controlCalidadData,
             fecha_analisis: controlCalidadData.fecha_analisis ? new Date(controlCalidadData.fecha_analisis).toISOString() : null,
         }
-        const response = await fetch("/api/traceability/calidad", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.post("/api/traceability/calidad", body);
     } catch (error) {
         console.error("Error al crear control de calidad:", error);
-        return {
-            success: false,
-            errorMessage: "Error al crear control de calidad"
-        }
+        return { success: false, errorMessage: "Error al crear control de calidad" };
     }
 }
 
@@ -327,83 +137,28 @@ export async function updateControlCalidad(id: string, controlCalidadData: Updat
             ...controlCalidadData,
             fecha_analisis: controlCalidadData.fecha_analisis ? new Date(controlCalidadData.fecha_analisis).toISOString() : null,
         }
-        const response = await fetch(`/api/traceability/calidad/${id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.patch(`/api/traceability/calidad/${id}`, body);
     } catch (error) {
         console.error("Error al actualizar control de calidad:", error);
-        return {
-            success: false,
-            errorMessage: "Error al actualizar control de calidad"
-        }
+        return { success: false, errorMessage: "Error al actualizar control de calidad" };
     }
 }
 
 export async function deleteControlCalidad(id: string) {
     try {
-        const response = await fetch(`/api/traceability/calidad/${id}`, {
-            method: "DELETE"
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.del(`/api/traceability/calidad/${id}`);
     } catch (error) {
         console.error("Error al eliminar control de calidad:", error);
-        return {
-            success: false,
-            errorMessage: "Error al eliminar control de calidad"
-        }
+        return { success: false, errorMessage: "Error al eliminar control de calidad" };
     }
 }
 
 export async function getProcesosProduccion() {
     try {
-        const response = await fetch("/api/traceability/procesos", {
-            method: "GET",
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.get("/api/traceability/procesos");
     } catch (error) {
         console.error("Error al obtener procesos de producción:", error);
-        return {
-            success: false,
-            errorMessage: "Error al obtener procesos de producción"
-        }
+        return { success: false, errorMessage: "Error al obtener procesos de producción" };
     }
 }
 
@@ -420,31 +175,10 @@ export async function createProcesoProduccion(procesoProduccionData: NewProcesoP
             fecha_inicio: procesoProduccionData.fecha_inicio ? new Date(procesoProduccionData.fecha_inicio).toISOString() : null,
             fecha_fin: procesoProduccionData.fecha_fin ? new Date(procesoProduccionData.fecha_fin).toISOString() : null,
         }
-        const response = await fetch("/api/traceability/procesos", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.post("/api/traceability/procesos", body);
     } catch (error) {
         console.error("Error al obtener procesos:", error);
-        return {
-            success: false,
-            errorMessage: "Error al obtener procesos"
-        }
+        return { success: false, errorMessage: "Error al obtener procesos" };
     }
 }
 
@@ -456,56 +190,18 @@ export async function updateProcesoProduccion(id: string, procesoProduccionData:
             fecha_inicio: procesoProduccionData.fecha_inicio ? new Date(procesoProduccionData.fecha_inicio).toISOString() : null,
             fecha_fin: procesoProduccionData.fecha_fin ? new Date(procesoProduccionData.fecha_fin).toISOString() : null,
         }
-        const response = await fetch(`/api/traceability/procesos/${id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.patch(`/api/traceability/procesos/${id}`, body);
     } catch (error) {
         console.error("Error al actualizar proceso:", error);
-        return {
-            success: false,
-            errorMessage: "Error al actualizar proceso"
-        }
+        return { success: false, errorMessage: "Error al actualizar proceso" };
     }
 }
 
 export async function deleteProcesoProduccion(id: string) {
     try {
-        const response = await fetch(`/api/traceability/procesos/${id}`, {
-            method: "DELETE"
-        });
-        if (response.ok) {
-            const result = await response.json();
-            return {
-                success: true,
-                data: result.data || result
-            }
-        } else if (response.status === 401) {
-            return {
-                success: false,
-                errorMessage: "No tienes permisos para acceder a este recurso"
-            }
-        }
+        return await api.del(`/api/traceability/procesos/${id}`);
     } catch (error) {
         console.error("Error al eliminar proceso:", error);
-        return {
-            success: false,
-            errorMessage: "Error al eliminar proceso"
-        }
+        return { success: false, errorMessage: "Error al eliminar proceso" };
     }
 }

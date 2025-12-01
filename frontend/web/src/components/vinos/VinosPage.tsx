@@ -3,9 +3,12 @@
 import { useState, useEffect } from "react"
 import { Wine, Plus, Search, Edit, Trash2, ArrowLeft, Package, DollarSign, Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
-import VinoModal from "@/components/vinos/VinosModal"
+import dynamic from 'next/dynamic'
+const VinoModal = dynamic(() => import('@/components/vinos/VinosModal'), { ssr: false })
 import { getVinos, deleteVino } from "@/services/VinosService"
 import { getInventario } from "@/services/InventoryService"
+import { fetchData } from "@/lib/fetchData"
+import { performDelete } from "@/lib/performDelete"
 import type { Vino } from "@/types/vino"
 
 export default function VinosPageContent() {
@@ -24,50 +27,17 @@ export default function VinosPageContent() {
             vino.tipo.toLowerCase().includes(searchTerm.toLowerCase()),
     )
 
-    const fetchData = async (apiCall: any, setter: any, dataName = "datos") => {
-        setLoading(true)
-        try {
-            const result = await apiCall();
-
-            if (result && result.success) {
-                if (!result.data.data) setter(result.data);
-                else setter(result.data.data);
-            } else if (result) {
-                console.error(`Error al obtener ${dataName}: ${result.errorMessage}`);
-                setter([]);
-            } else {
-                console.error(`Error: No se pudo obtener respuesta del servicio para ${dataName}.`);
-                setter([]);
-            }
-        } catch (error) {
-            // Captura errores de red o errores lanzados por apiCall antes del manejo de la respuesta 'result'
-            console.error(`Error inesperado al intentar obtener ${dataName}:`, error);
-            setter([]);
-        }
-        setLoading(false)
-    };
-
     useEffect(() => {
         // Llama a la función genérica con la función de API y la función de estado correspondiente.
-        fetchData(getVinos, setVinos, "Vinos");
+        fetchData(getVinos, setVinos, "Vinos", setLoading);
         fetchData(getInventario, setInventario, "Inventario");
     }, []);
 
 
     const handleDelete = async (id_vino: string) => {
-        if (!window.confirm("¿Estás seguro de que quieres eliminar este vino?")) {
-            return
-        }
-
-        const result = await deleteVino(id_vino)
-
-        if (result && result.success) {
-            fetchData(getVinos, setVinos, "Vinos")
-        } else if (result) {
-            console.error("Error al eliminar:", result.errorMessage)
-        } else {
-            console.error("Error: No se pudo obtener respuesta del servicio al eliminar.")
-        }
+        await performDelete(deleteVino, id_vino, () => fetchData(getVinos, setVinos, "Vinos"), {
+            confirmMessage: "¿Estás seguro de que quieres eliminar este vino?",
+        })
     }
 
     return (

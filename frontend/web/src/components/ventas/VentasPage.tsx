@@ -1,11 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import dynamic from 'next/dynamic'
 import { ShoppingCart, Plus, Search, Eye, Trash2, ArrowLeft, DollarSign } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { getVentas, deleteVenta } from "@/services/VentasService"
+import { fetchData } from "@/lib/fetchData"
+import { performDelete } from "@/lib/performDelete"
 import type { Venta } from "@/types/ventas"
-import VentasModal from "@/components/ventas/VentasModal"
+const VentasModal = dynamic(() => import('@/components/ventas/VentasModal'), { ssr: false })
+const VentasDetailModal = dynamic(() => import('@/components/ventas/VentasDetailModal'), { ssr: false })
+import Link from "next/link"
 
 export default function VentasPageContent() {
     const router = useRouter()
@@ -15,21 +20,14 @@ export default function VentasPageContent() {
     const [error, setError] = useState("")
     const [searchTerm, setSearchTerm] = useState("")
     const [showModal, setShowModal] = useState(false)
+    const [detailVentaId, setDetailVentaId] = useState<string | null>(null)
+    const [showDetailModal, setShowDetailModal] = useState(false)
 
     const filteredVentas = ventas.filter((venta) => venta.cliente.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const fetchVentas = async () => {
-        setLoading(true)
-        const result = await getVentas()
-
-        if (result && result.success) {
-            setVentas(result.data.data)
-            setError("")
-        } else {
-            console.error("Error: No se pudo obtener respuesta del servicio.")
-            setVentas([])
-        }
-        setLoading(false)
+        setError("")
+        fetchData(getVentas, setVentas, "ventas", setLoading)
     }
 
     useEffect(() => {
@@ -37,30 +35,19 @@ export default function VentasPageContent() {
     }, [])
 
     const handleDelete = async (id_venta: string) => {
-        if (!window.confirm("¿Estas seguro de que quieres eliminar esta venta ?")) {
-            return
-        }
-        const result = await deleteVenta(id_venta)
-
-        if (result && result.success) {
-            fetchVentas()
-        } else if (result) {
-            console.error("Error al eliminar:", result.errorMessage)
-        } else {
-            console.error("Error: No se puede obtener respuesta del servicio al eliminar ")
-        }
+        await performDelete(deleteVenta, id_venta, fetchVentas, { confirmMessage: "¿Estas seguro de que quieres eliminar esta venta ?" })
     }
     return (
         <div className="min-h-screen bg-background p-6">
             <div className="mb-8 bg-gradient-to-r from-[#5e2129] via-[#7d2b35] to-[#8b7355] p-8 rounded-2xl shadow-xl animate-in slide-in-from-top duration-300">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => router.push("/admin")}
+                        <Link
+                            href='/'
                             className="bg-white/20 p-3 rounded-xl backdrop-blur-sm hover:bg-white/30 transition-all hover:scale-105"
                         >
                             <ArrowLeft className="w-6 h-6 text-white" />
-                        </button>
+                        </Link>
                         <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
                             <DollarSign className="w-8 h-8 text-white" />
                         </div>
@@ -152,7 +139,7 @@ export default function VentasPageContent() {
 
                             <div className="flex gap-2">
                                 <button
-                                    onClick={() => alert("Funcionalidad próximamente")}
+                                    onClick={() => { setDetailVentaId(venta.id_venta); setShowDetailModal(true) }}
                                     className="flex-1 bg-gradient-to-r from-[#5e2129] to-[#7d2b35] text-white px-4 py-2.5 rounded-lg hover:from-[#7d2b35] hover:to-[#8b3d47] transition-all hover:scale-105 flex items-center justify-center gap-2 shadow-md"
                                 >
                                     <Eye className="w-4 h-4" />
@@ -178,6 +165,12 @@ export default function VentasPageContent() {
                         fetchVentas()
                         setShowModal(false)
                     }}
+                />
+            )}
+            {showDetailModal && detailVentaId && (
+                <VentasDetailModal
+                    ventaId={detailVentaId}
+                    onClose={() => { setShowDetailModal(false); setDetailVentaId(null); }}
                 />
             )}
         </div>
