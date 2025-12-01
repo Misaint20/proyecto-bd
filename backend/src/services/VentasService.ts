@@ -119,6 +119,22 @@ export const findAllVentas = async (): Promise<Venta[]> => {
 };
 
 /**
+ * Obtiene una venta específica con sus detalles.
+ */
+export const findVentaById = async (id: string) => {
+    const venta = await prisma.venta.findUnique({
+        where: { id_venta: id },
+        include: { Detalle_Venta: { include: { Vino: true } } },
+    });
+    
+    if (!venta) {
+        throw new Error('Venta no encontrada.');
+    }
+    
+    return venta;
+};
+
+/**
  * Elimina una venta por ID.
  */
 export const deleteVenta = async (id: string): Promise<Venta> => {

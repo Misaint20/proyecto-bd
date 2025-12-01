@@ -14,6 +14,18 @@ export interface Venta {
         id_lote: string;
         cantidad: number;
     }[];
+    Detalle_Venta?: Array<{
+        id_detalle?: string;
+        id_vino: string;
+        id_lote?: string;
+        cantidad: number;
+        precio_unitario: number;
+        subtotal: string | number;
+        Vino?: {
+            nombre: string;
+            tipo: string;
+        };
+    }>;
 }
 
 export interface ItemCarrito{
