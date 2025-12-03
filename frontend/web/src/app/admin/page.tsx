@@ -178,7 +178,7 @@ export default function AdminDashboard() {
               href="/admin/ventas/reportes"
               className="block w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-semibold text-sm md:text-base flex items-center gap-3 group border-2 border-border hover:border-primary/30"
             >
-              <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-primary" />
+              <TrendingUp className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-primary" />
               Reportes de ventas
             </Link>
             <Link

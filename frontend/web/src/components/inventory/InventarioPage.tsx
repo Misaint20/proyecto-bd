@@ -65,6 +65,34 @@ export default function InventoryPage() {
         fetchData(getInventario, setInventarios, "Inventario");
     }, []);
 
+    // Handle URL hash for direct navigation (e.g. /bodeguero/inventory#create)
+    useEffect(() => {
+        if (typeof window === "undefined") return
+        const hash = (window.location.hash || "").replace("#", "")
+        if (!hash) return
+        const tabNames = ["vinedos", "varietales", "barricas", "inventario", "mezclas"]
+        if (tabNames.includes(hash)) {
+            setActiveTab(hash as any)
+            const el = document.getElementById(hash)
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
+            return
+        }
+
+        // special anchors
+        if (hash === "create") {
+            setActiveTab("inventario")
+            const el = document.getElementById("create")
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" })
+            return
+        }
+        if (hash === "barricas") {
+            setActiveTab("barricas")
+            const el = document.getElementById("barricas")
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" })
+            return
+        }
+    }, [])
+
     const handleEdit = (item: any, type: string) => {
         setEditingItem(item)
         if (type === "vinedo") setVinedoModalOpen(true)
@@ -122,7 +150,7 @@ export default function InventoryPage() {
 
             <div className="container mx-auto px-4 md:px-6 py-6 md:py-8">
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6 mb-6 md:mb-8">
+                <div id="stats" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6 mb-6 md:mb-8">
                     <Card className="p-4 md:p-6 bg-card hover:shadow-2xl transition-all duration-300 border-2 border-border hover:border-primary/50 hover:scale-[1.02]">
                         <div className="flex items-center justify-between">
                             <div>
@@ -210,7 +238,7 @@ export default function InventoryPage() {
                 </div>
 
                 {/* Search and Create */}
-                <Card className="p-4 md:p-6 mb-6 bg-card border-2 border-border">
+                <Card id="create" className="p-4 md:p-6 mb-6 bg-card border-2 border-border">
                     <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                         <div className="relative flex-1 w-full">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 md:h-5 md:w-5 text-muted-foreground" />
@@ -241,7 +269,7 @@ export default function InventoryPage() {
                 </Card>
 
                 {/* Tables */}
-                <Card className="overflow-hidden border-2 border-border shadow-lg">
+                <Card id="tables" className="overflow-hidden border-2 border-border shadow-lg">
                     {activeTab === "vinedos" && (
                         <div className="overflow-x-auto">
                             <table className="w-full">
@@ -358,7 +386,8 @@ export default function InventoryPage() {
 
                     {/* Barricas Table */}
                     {activeTab === "barricas" && (
-                        <div className="overflow-x-auto">
+                        <div id="barricas" className="overflow-x-auto">
+                        
                             <table className="w-full">
                                 <thead className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
                                     <tr>
