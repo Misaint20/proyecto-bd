@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Package, Wine, AlertTriangle, ClipboardCheck, PackagePlus, PackageMinus, Search } from "lucide-react"
+import { Package, Wine, AlertTriangle, ClipboardCheck, PackagePlus, PackageMinus, Search, Grape, Warehouse } from "lucide-react"
 import { fetchData } from "@/lib/fetchData"
 import { getInventario } from "@/services/InventoryService"
 import { getLotes } from "@/services/TraceabilityService"
@@ -40,7 +40,7 @@ export default function BodegueroDashboard() {
           <div>
             <h1 className="text-2xl md:text-4xl font-bold text-primary-foreground">Panel de Bodeguero</h1>
             <p className="text-sm md:text-base text-primary-foreground/90 mt-1">
-              Gestiona el inventario y control de calidad
+              Gestiona el inventario y trazabilidad del almacén
             </p>
           </div>
         </div>
@@ -133,18 +133,18 @@ export default function BodegueroDashboard() {
         >
           <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-card-foreground flex items-center gap-2">
             <div className="p-2 rounded-lg bg-accent/15">
-              <ClipboardCheck className="w-5 h-5 md:w-6 md:h-6 text-accent-foreground" />
+              <Warehouse className="w-5 h-5 md:w-6 md:h-6 text-accent-foreground" />
             </div>
-            Control de Calidad
+            Viñedos y Barricas
           </h3>
           <div className="space-y-3">
-            <Link href="/bodeguero/traceability#barricas" className="w-full block bg-gradient-to-r from-accent to-[oklch(0.75_0.12_82)] text-accent-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group">
-              <Search className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform" />
-              Inspeccionar barricas
+            <Link href="/bodeguero/inventory#vinedos" className="w-full block bg-gradient-to-r from-accent to-[oklch(0.75_0.12_82)] text-accent-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group">
+              <Grape className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform" />
+              Ver viñedos
             </Link>
-            <Link href="/bodeguero/traceability#create" className="w-full block bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border">
-              <ClipboardCheck className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-accent-foreground" />
-              Registrar control
+            <Link href="/bodeguero/inventory#barricas" className="w-full block bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border">
+              <Search className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-accent-foreground" />
+              Ver barricas
             </Link>
           </div>
         </div>

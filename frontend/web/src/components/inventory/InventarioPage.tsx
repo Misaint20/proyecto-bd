@@ -271,7 +271,7 @@ export default function InventoryPage() {
                 {/* Tables */}
                 <Card id="tables" className="overflow-hidden border-2 border-border shadow-lg">
                     {activeTab === "vinedos" && (
-                        <div className="overflow-x-auto">
+                        <div id="vinedos" className="overflow-x-auto">
                             <table className="w-full">
                                 <thead className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
                                     <tr>
