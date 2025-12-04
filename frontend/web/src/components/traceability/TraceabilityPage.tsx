@@ -42,6 +42,25 @@ export default function TraceabilityPageComponent() {
         fetchData(getProcesosProduccion, setProcesos, "Procesos");
     }, []);
 
+    useEffect(() => {
+        if (typeof window === "undefined") return
+        const hash = (window.location.hash || "").replace("#", "")
+        if (!hash) return
+        const tabNames = ["cosechas", "lotes", "procesos", "controles"]
+        if (tabNames.includes(hash)) {
+            const mapToTab: any = { cosechas: "cosechas", lotes: "lotes", procesos: "procesos", controles: "controles" }
+            setActiveTab(mapToTab[hash])
+            const el = document.getElementById(hash)
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" })
+            return
+        }
+        if (hash === "create") {
+            const el = document.getElementById("create")
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" })
+            return
+        }
+    }, [])
+
     const handleCreate = (type: TabType) => {
         setEditingItem(null)
         if (type === "cosechas") setCosechaModalOpen(true)
@@ -187,7 +206,7 @@ export default function TraceabilityPageComponent() {
                 </div>
 
                 {/* Search and Create */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <div id="create" className="flex flex-col sm:flex-row gap-4 mb-6">
                     <div className="relative flex-1">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 md:h-5 md:w-5" />
                         <Input
@@ -208,7 +227,7 @@ export default function TraceabilityPageComponent() {
 
                 {/* Table */}
                 <Card className="overflow-hidden border-2 border-border shadow-lg">
-                    <div className="overflow-x-auto">
+                    <div id="lotes" className="overflow-x-auto">
                         <table className="w-full">
                             <thead className="bg-gradient-to-r from-primary to-accent text-primary-foreground">
                                 <tr>

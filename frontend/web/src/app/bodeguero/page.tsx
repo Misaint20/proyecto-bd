@@ -1,8 +1,35 @@
-import Image from "next/image"
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Package, Wine, AlertTriangle, ClipboardCheck, PackagePlus, PackageMinus, Search } from "lucide-react"
+import { Package, Wine, AlertTriangle, ClipboardCheck, PackagePlus, PackageMinus, Search, Grape, Warehouse } from "lucide-react"
+import { fetchData } from "@/lib/fetchData"
+import { getInventario } from "@/services/InventoryService"
+import { getLotes } from "@/services/TraceabilityService"
 
 export default function BodegueroDashboard() {
+  const [inventario, setInventario] = useState<any[]>([])
+  const [lotes, setLotes] = useState<any[]>([])
+  const [totalBotellas, setTotalBotellas] = useState<number>(0)
+  const [barricasActivas, setBarricasActivas] = useState<number>(0)
+  const [stockAlerts, setStockAlerts] = useState<number>(0)
+
+      useEffect(() => {
+    fetchData(getInventario, (data: any[]) => {
+      setInventario(data)
+      const total = data.reduce((acc: number, item: any) => acc + Number(item.Lote?.cantidad_botellas || 0), 0)
+      setTotalBotellas(total)
+      const alerts = data.filter((item: any) => (Number(item.Lote?.cantidad_botellas || 0) < 50)).length
+      setStockAlerts(alerts)
+    }, "inventario-bodeguero")
+
+    fetchData(getLotes, (data: any[]) => {
+      setLotes(data)
+      const barricas = data.filter((l: any) => !!l.Barrica).length
+      setBarricasActivas(barricas)
+    }, "lotes-bodeguero")
+  }, [])
+
   return(
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-4 md:p-6">
       <div className="mb-6 md:mb-8 bg-gradient-to-r from-primary via-primary to-[oklch(0.4_0.14_20)] p-6 md:p-8 rounded-2xl shadow-xl border border-primary/20 animate-fade-in">
@@ -13,7 +40,7 @@ export default function BodegueroDashboard() {
           <div>
             <h1 className="text-2xl md:text-4xl font-bold text-primary-foreground">Panel de Bodeguero</h1>
             <p className="text-sm md:text-base text-primary-foreground/90 mt-1">
-              Gestiona el inventario y control de calidad
+              Gestiona el inventario y trazabilidad del almacén
             </p>
           </div>
         </div>
@@ -27,7 +54,7 @@ export default function BodegueroDashboard() {
                 Botellas en Stock
               </h3>
               <p className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-primary to-[oklch(0.4_0.14_20)] bg-clip-text text-transparent mt-2">
-                1,245
+                {totalBotellas.toLocaleString()}
               </p>
               <p className="text-xs md:text-sm text-muted-foreground mt-1">Unidades disponibles</p>
             </div>
@@ -47,7 +74,7 @@ export default function BodegueroDashboard() {
                 Barricas Activas
               </h3>
               <p className="text-3xl md:text-4xl font-bold bg-gradient-to-br from-accent to-[oklch(0.78_0.13_80)] bg-clip-text text-transparent mt-2">
-                10
+                {barricasActivas}
               </p>
               <p className="text-xs md:text-sm text-muted-foreground mt-1">En proceso de añejamiento</p>
             </div>
@@ -66,7 +93,7 @@ export default function BodegueroDashboard() {
               <h3 className="text-xs md:text-sm font-medium text-muted-foreground uppercase tracking-wide">
                 Alertas Stock
               </h3>
-              <p className="text-3xl md:text-4xl font-bold text-destructive mt-2">3</p>
+              <p className="text-3xl md:text-4xl font-bold text-destructive mt-2">{stockAlerts}</p>
               <p className="text-xs md:text-sm text-muted-foreground mt-1">Requieren atención</p>
             </div>
             <div className="p-3 md:p-4 rounded-xl bg-destructive/10 group-hover:bg-destructive/20 transition-all duration-300">
@@ -77,7 +104,7 @@ export default function BodegueroDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        <div className="bg-card p-5 md:p-6 rounded-2xl shadow-lg border border-border hover:shadow-xl transition-all duration-300 animate-slide-in">
+        <div className="bg-card p-5 md:p-6 rounded-2xl shadow-lg border border-border hover:shadow-2xl transition-all duration-300 animate-slide-in">
           <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-card-foreground flex items-center gap-2">
             <div className="p-2 rounded-lg bg-primary/10">
               <Package className="w-5 h-5 md:w-6 md:h-6 text-primary" />
@@ -85,18 +112,18 @@ export default function BodegueroDashboard() {
             Gestión de Inventario
           </h3>
           <div className="space-y-3">
-            <button className="w-full bg-gradient-to-r from-primary to-[oklch(0.38_0.13_18)] text-primary-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group">
+            <Link href="/bodeguero/inventory#tables" className="w-full block bg-gradient-to-r from-primary to-[oklch(0.38_0.13_18)] text-primary-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group">
               <Search className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform" />
               Ver inventario completo
-            </button>
-            <button className="w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border">
+            </Link>
+            <Link href="/bodeguero/inventory#create" className="w-full block bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border">
               <PackagePlus className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-primary" />
               Registrar entrada
-            </button>
-            <button className="w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border">
+            </Link>
+            <Link href="/bodeguero/inventory#create" className="w-full block bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border">
               <PackageMinus className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-destructive" />
               Registrar salida
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -106,19 +133,19 @@ export default function BodegueroDashboard() {
         >
           <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-card-foreground flex items-center gap-2">
             <div className="p-2 rounded-lg bg-accent/15">
-              <ClipboardCheck className="w-5 h-5 md:w-6 md:h-6 text-accent-foreground" />
+              <Warehouse className="w-5 h-5 md:w-6 md:h-6 text-accent-foreground" />
             </div>
-            Control de Calidad
+            Viñedos y Barricas
           </h3>
           <div className="space-y-3">
-            <button className="w-full bg-gradient-to-r from-accent to-[oklch(0.75_0.12_82)] text-accent-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group">
-              <Search className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform" />
-              Inspeccionar barricas
-            </button>
-            <button className="w-full bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border">
-              <ClipboardCheck className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-accent-foreground" />
-              Registrar control
-            </button>
+            <Link href="/bodeguero/inventory#vinedos" className="w-full block bg-gradient-to-r from-accent to-[oklch(0.75_0.12_82)] text-accent-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl hover:shadow-lg transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group">
+              <Grape className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform" />
+              Ver viñedos
+            </Link>
+            <Link href="/bodeguero/inventory#barricas" className="w-full block bg-muted hover:bg-muted/80 text-foreground px-5 md:px-6 py-3 md:py-4 rounded-xl transition-all duration-300 font-medium text-sm md:text-base flex items-center gap-3 group border border-border">
+              <Search className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform text-accent-foreground" />
+              Ver barricas
+            </Link>
           </div>
         </div>
       </div>
