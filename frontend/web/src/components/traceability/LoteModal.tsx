@@ -23,17 +23,17 @@ interface LoteModalProps {
     onClose: () => void
     onSuccess: () => void
     lote?:
-        | Lote
-        | {
-              id_lote?: string
-              id_vino?: string
-              id_cosecha?: string
-              id_barrica?: string
-              numero_lote?: string
-              cantidad_botellas?: number
-              fecha_embotellado?: string
-          }
-        | null
+    | Lote
+    | {
+        id_lote?: string
+        id_vino?: string
+        id_cosecha?: string
+        id_barrica?: string
+        numero_lote?: string
+        cantidad_botellas?: number
+        fecha_embotellado?: string
+    }
+    | null
 }
 
 export default function LoteModal({ isOpen, onClose, onSuccess, lote }: LoteModalProps) {
@@ -78,8 +78,8 @@ export default function LoteModal({ isOpen, onClose, onSuccess, lote }: LoteModa
                     fecha_embotellado: (lote as any)?.fecha_embotellado
                         ? new Date((lote as any).fecha_embotellado).toISOString().split("T")[0]
                         : (lote as Lote)?.fecha_embotellado
-                        ? new Date((lote as Lote).fecha_embotellado).toISOString().split("T")[0]
-                        : new Date().toISOString().split("T")[0],
+                            ? new Date((lote as Lote).fecha_embotellado).toISOString().split("T")[0]
+                            : new Date().toISOString().split("T")[0],
                 })
             }
             setError("")
@@ -137,8 +137,8 @@ export default function LoteModal({ isOpen, onClose, onSuccess, lote }: LoteModa
                     </Label>
                     <Input
                         id="numero_lote"
-                        value={formData.numero_lote}
-                        onChange={(e) => setFormData({ ...formData, numero_lote: e.target.value })}
+                        value={formData?.numero_lote ?? ""}
+                        onChange={(e) => setFormData({ ...(formData ?? {}), numero_lote: e.target.value })}
                         className="border-2 focus:border-blue-500"
                         placeholder="Ej: LOTE-2024-001"
                         required
@@ -151,7 +151,7 @@ export default function LoteModal({ isOpen, onClose, onSuccess, lote }: LoteModa
                         <Wine className="h-4 w-4 text-blue-600" />
                         Vino *
                     </Label>
-                    <Select value={formData.id_vino} onValueChange={(value) => setFormData({ ...formData, id_vino: value })}>
+                    <Select value={formData?.id_vino ?? ""} onValueChange={(value) => setFormData({ ...(formData ?? {}), id_vino: value })}>
                         <SelectTrigger className="border-2 focus:border-blue-500">
                             <SelectValue placeholder="Selecciona un vino" />
                         </SelectTrigger>
@@ -172,8 +172,8 @@ export default function LoteModal({ isOpen, onClose, onSuccess, lote }: LoteModa
                         Cosecha *
                     </Label>
                     <Select
-                        value={formData.id_cosecha}
-                        onValueChange={(value) => setFormData({ ...formData, id_cosecha: value })}
+                        value={formData?.id_cosecha ?? ""}
+                        onValueChange={(value) => setFormData({ ...(formData ?? {}), id_cosecha: value })}
                     >
                         <SelectTrigger className="border-2 focus:border-blue-500">
                             <SelectValue placeholder="Selecciona una cosecha" />
@@ -195,8 +195,8 @@ export default function LoteModal({ isOpen, onClose, onSuccess, lote }: LoteModa
                         Barrica (Opcional)
                     </Label>
                     <Select
-                        value={formData.id_barrica}
-                        onValueChange={(value) => setFormData({ ...formData, id_barrica: value })}
+                        value={formData?.id_barrica ?? ""}
+                        onValueChange={(value) => setFormData({ ...(formData ?? {}), id_barrica: value })}
                     >
                         <SelectTrigger className="border-2 focus:border-blue-500">
                             <SelectValue placeholder="Selecciona una barrica" />
@@ -222,8 +222,8 @@ export default function LoteModal({ isOpen, onClose, onSuccess, lote }: LoteModa
                         id="cantidad_botellas"
                         type="number"
                         min="0"
-                        value={formData.cantidad_botellas}
-                        onChange={(e) => setFormData({ ...formData, cantidad_botellas: e.target.value })}
+                        value={formData?.cantidad_botellas ?? ""}
+                        onChange={(e) => setFormData({ ...(formData ?? {}), cantidad_botellas: e.target.value })}
                         className="border-2 focus:border-blue-500"
                         placeholder="Ej: 1000"
                         required
@@ -239,8 +239,8 @@ export default function LoteModal({ isOpen, onClose, onSuccess, lote }: LoteModa
                     <Input
                         id="fecha_embotellado"
                         type="date"
-                        value={formData.fecha_embotellado}
-                        onChange={(e) => setFormData({ ...formData, fecha_embotellado: e.target.value })}
+                        value={formData?.fecha_embotellado ?? ""}
+                        onChange={(e) => setFormData({ ...(formData ?? {}), fecha_embotellado: e.target.value })}
                         className="border-2 focus:border-blue-500"
                         required
                     />
