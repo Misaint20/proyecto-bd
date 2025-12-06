@@ -3,108 +3,104 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { X, Package, MapPin, Hash, Plus, Minus } from "lucide-react"
+import { BaseModal } from "@/components/ui/base-modal"
+import { ErrorAlert } from "@/components/ui/error-alert"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createInventario, updateInventario } from "@/services/InventoryService"
 import { getLotes } from "@/services/TraceabilityService"
 import { fetchData } from "@/lib/fetchData"
 import type { Lote } from "@/types/traceability"
+import type { Inventario } from "@/types/inventory"
+import { useModalForm } from "@/hooks/useModalForm"
 
 type InventarioModalProps = {
     open: boolean
     onClose: () => void
-    inventario?: any
+    inventario?: Partial<Inventario> | null
     onSuccess: () => void
 }
 
 export default function InventarioModal({ open, onClose, inventario, onSuccess }: InventarioModalProps) {
-    const [formData, setFormData] = useState({
-        id_lote: inventario?.numero_lote || "",
-        ubicacion: inventario?.ubicacion || "",
-        cantidad_botellas: inventario?.cantidad_botellas?.toString() || "",
-        tipo_operacion: "aumentar",
-    })
-    const [error, setError] = useState("")
     const [lotes, setLotes] = useState<Lote[]>([])
+
+    const { formData, setFormData, error, setError, loading, handleSubmit } = useModalForm<Partial<Inventario>>({
+        isOpen: open,
+        initialData: inventario ?? null,
+        createFn: (data: any) => {
+            const cantidadFinal = Math.abs(Number.parseInt((data as any).cantidad_botellas)) || 0
+            const payload = {
+                id_lote: (data as any).id_lote,
+                ubicacion: (data as any).ubicacion,
+                cantidad_botellas: cantidadFinal,
+            }
+            return createInventario(payload)
+        },
+        updateFn: (id: any, data: any) => {
+            let cantidadFinal = Number.parseInt((data as any).cantidad_botellas) || 0
+            if ((data as any).tipo_operacion === "reducir") cantidadFinal = -Math.abs(cantidadFinal)
+            else cantidadFinal = Math.abs(cantidadFinal)
+            const payload = {
+                id_lote: (data as any).id_lote,
+                ubicacion: (data as any).ubicacion,
+                cantidad_botellas: cantidadFinal,
+            }
+            return updateInventario(id, payload)
+        },
+        getId: (d: any) => (d as any)?.id_inventario ?? (d as any)?.id,
+        onSuccess,
+    })
 
     useEffect(() => {
         fetchData(getLotes, setLotes, "lotes")
     }, [])
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError("")
 
-        if (!formData.id_lote || !formData.ubicacion || !formData.cantidad_botellas) {
-            setError("Por favor, complete todos los campos obligatorios.")
-            return
+        const validate = () => {
+            if (!formData || !((formData as any).id_lote) || !((formData as any).ubicacion) || !((formData as any).cantidad_botellas)) {
+                setError("Por favor, complete todos los campos obligatorios.")
+                return false
+            }
+            return true
         }
 
-        let cantidadFinal = Number.parseInt(formData.cantidad_botellas)
-
-        if (inventario && formData.tipo_operacion === "reducir") {
-            cantidadFinal = -Math.abs(cantidadFinal)
-        } else {
-            cantidadFinal = Math.abs(cantidadFinal)
-        }
-
-        const dataToSend = {
-            id_lote: formData.id_lote,
-            ubicacion: formData.ubicacion,
+        // Normalize cantidad
+        const cantidadFinal = Number.parseInt((formData as any).cantidad_botellas)
+        const payload = {
+            id_lote: (formData as any).id_lote,
+            ubicacion: (formData as any).ubicacion,
             cantidad_botellas: cantidadFinal,
         }
 
-        const isUpdate = inventario !== null && inventario.id_inventario
-
-        const serviceCall = isUpdate ? updateInventario(inventario.id_inventario, dataToSend) : createInventario(dataToSend)
-
-        const result = await serviceCall
-
-        if (result && result.success) {
-            onSuccess()
+        const result = await handleSubmit(() => validate())
+        // `useModalForm` calls onSuccess already; close modal on success
+        if (result && (result as any).success) {
             onClose()
-        } else {
-            setError(result?.errorMessage || "Ocurrió un error desconocido.")
         }
     }
 
     if (!open) return null
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-card rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white p-6 rounded-t-2xl">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-                                <Package className="h-6 w-6 text-white" />
-                            </div>
-                            <h2 className="text-2xl font-bold">{inventario ? "Editar Inventario" : "Nuevo Inventario"}</h2>
-                        </div>
-                        <button
-                            onClick={onClose}
-                            className="bg-white/20 p-2 rounded-lg hover:bg-white/30 transition-all hover:scale-110"
-                        >
-                            <X className="h-5 w-5 text-white" />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                    {error && (
-                        <div className="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg flex items-center gap-2">
-                            <span className="font-semibold">Error:</span>
-                            <span>{error}</span>
-                        </div>
-                    )}
+        <BaseModal
+            isOpen={open}
+            onClose={onClose}
+            title={inventario ? "Editar Inventario" : "Nuevo Inventario"}
+            icon={<Package className="h-6 w-6 text-white" />}
+            gradientColors="from-blue-600 via-cyan-600 to-teal-600"
+            maxWidth="max-w-2xl"
+        >
+            <form onSubmit={onSubmit} className="space-y-6">
+                <ErrorAlert message={error} />
 
                     <div>
                         <label className="block text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
                             <Hash className="w-4 h-4 text-blue-600" />
                             Número de Lote *
                         </label>
-                        <Select value={formData.id_lote} onValueChange={(value) => setFormData({ ...formData, id_lote: value })}>
+                        <Select value={(formData as any)?.id_lote ?? ""} onValueChange={(value) => setFormData({ ...(formData as any), id_lote: value })}>
                             <SelectTrigger className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-foreground font-mono">
                                 <SelectValue placeholder="Selecciona el número de lote" />
                             </SelectTrigger>
@@ -124,8 +120,8 @@ export default function InventarioModal({ open, onClose, inventario, onSuccess }
                             Ubicación *
                         </label>
                         <Select
-                            value={formData.ubicacion}
-                            onValueChange={(value) => setFormData({ ...formData, ubicacion: value })}
+                            value={(formData as any)?.ubicacion ?? ""}
+                            onValueChange={(value) => setFormData({ ...(formData as any), ubicacion: value })}
                         >
                             <SelectTrigger className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-foreground">
                                 <SelectValue placeholder="Selecciona la ubicación" />
@@ -147,8 +143,8 @@ export default function InventarioModal({ open, onClose, inventario, onSuccess }
                                 Tipo de Operación *
                             </label>
                             <Select
-                                value={formData.tipo_operacion}
-                                onValueChange={(value) => setFormData({ ...formData, tipo_operacion: value })}
+                                value={(formData as any)?.tipo_operacion ?? "aumentar"}
+                                onValueChange={(value) => setFormData({ ...(formData as any), tipo_operacion: value })}
                             >
                                 <SelectTrigger className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-foreground">
                                     <SelectValue placeholder="Selecciona el tipo de operación" />
@@ -176,46 +172,33 @@ export default function InventarioModal({ open, onClose, inventario, onSuccess }
                             <Package className="w-4 h-4 text-blue-600" />
                             Cantidad de Botellas *
                         </label>
-                        <Select
-                            value={formData.cantidad_botellas}
-                            onValueChange={(value) => setFormData({ ...formData, cantidad_botellas: value })}
-                        >
-                            <SelectTrigger className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-foreground">
-                                <SelectValue placeholder="Selecciona la cantidad" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="0">0 botellas</SelectItem>
-                                <SelectItem value="100">100 botellas</SelectItem>
-                                <SelectItem value="250">250 botellas</SelectItem>
-                                <SelectItem value="500">500 botellas</SelectItem>
-                                <SelectItem value="750">750 botellas</SelectItem>
-                                <SelectItem value="1000">1,000 botellas</SelectItem>
-                                <SelectItem value="1500">1,500 botellas</SelectItem>
-                                <SelectItem value="2000">2,000 botellas</SelectItem>
-                                <SelectItem value="2500">2,500 botellas</SelectItem>
-                                <SelectItem value="3000">3,000 botellas</SelectItem>
-                                <SelectItem value="5000">5,000 botellas</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <input
+                            type="number"
+                            min="0"
+                            value={(formData as any)?.cantidad_botellas ?? ""}
+                            onChange={(e) => setFormData({ ...(formData as any), cantidad_botellas: e.target.value })}
+                            className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-foreground"
+                            placeholder="Ej: 1000"
+                            required
+                        />
                     </div>
 
-                    <div className="flex gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="flex-1 px-6 py-3 border-2 border-border rounded-lg hover:bg-accent transition-all hover:scale-105 font-semibold text-foreground"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all hover:scale-105 font-semibold shadow-lg"
-                        >
-                            {inventario ? "Actualizar" : "Crear"} Inventario
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                <div className="flex gap-3 pt-4">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="flex-1 px-6 py-3 border-2 border-border rounded-lg hover:bg-accent transition-all hover:scale-105 font-semibold text-foreground"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        type="submit"
+                        className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all hover:scale-105 font-semibold shadow-lg"
+                    >
+                        {inventario ? "Actualizar" : "Crear"} Inventario
+                    </button>
+                </div>
+            </form>
+        </BaseModal>
     )
 }

@@ -8,6 +8,10 @@ import { getInventario } from "@/services/InventoryService"
 import type { ItemCarrito } from "@/types/ventas"
 import type { Inventario } from "@/types/inventory"
 
+import { BaseModal } from "@/components/ui/base-modal"
+import { ErrorAlert } from "@/components/ui/error-alert"
+import { Button } from "@/components/ui/button"
+
 interface VentasModalProps {
     onClose: () => void
     onSuccess: () => void
@@ -120,32 +124,16 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
         }
     }
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-            <div className="bg-card rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
-                <div className="bg-gradient-to-r from-[#5e2129] via-[#7d2b35] to-[#8b7355] p-6 rounded-t-2xl sticky top-0 z-10">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-                                <ShoppingCart className="w-6 h-6 text-white" />
-                            </div>
-                            <h2 className="text-2xl font-bold text-white">Nueva venta</h2>
-                        </div>
-                        <button
-                            onClick={onClose}
-                            className="bg-white/20 p-2 rounded-lg hover:bg-white/30 transition-all hover:scale-110"
-                            type="button"
-                        >
-                            <X className="w-6 h-6 text-white" />
-                        </button>
-                    </div>
-                </div>
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                    {error && (
-                        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg flex items-center gap-2 animate-in slide-in-from-top duration-200">
-                            <span className="font-semibold">Error:</span>
-                            <span>{error}</span>
-                        </div>
-                    )}
+        <BaseModal
+            isOpen={true}
+            onClose={onClose}
+            title="Nueva venta"
+            icon={<ShoppingCart className="w-6 h-6 text-white" />}
+            gradientColors="from-[#5e2129] via-[#7d2b35] to-[#8b7355]"
+            maxWidth="max-w-3xl"
+        >
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <ErrorAlert message={error} />
                     <div>
                         <label className="text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
                             <User className="w-4 h-4 text-[#5e2129] dark:text-[#d4a574]" />
@@ -192,14 +180,14 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
                                 />
                             </div>
                         </div>
-                        <button
+                        <Button
                             type="button"
                             onClick={agregarAlCarrito}
                             className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-3 text-white bg-gradient-to-r from-[#5e2129] to-[#8b7355] rounded-lg shadow-md hover:from-[#7d2b35] hover:to-[#9d8565] focus:outline-none focus:ring-2 focus:ring-[#5e2129] transition-all hover:scale-[1.02]"
                         >
                             <Plus className="w-5 h-5" />
                             Agregar al carrito
-                        </button>
+                        </Button>
                     </div>
                     <div>
                         <div className="border border-border rounded-xl p-4 bg-card">
@@ -232,14 +220,15 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
                                                     </span>
                                                 </p>
                                             </div>
-                                            <button
+                                            <Button
                                                 type="button"
                                                 onClick={() => eliminarDelCarrito(index)}
-                                                className="bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-all hover:scale-110"
+                                                variant="destructive"
+                                                size="icon"
                                                 title="Eliminar del carrito"
                                             >
                                                 <Trash2 className="w-4 h-4" />
-                                            </button>
+                                            </Button>
                                         </div>
                                     ))}
                                 </div>
@@ -257,32 +246,32 @@ export default function VentasModal({ onClose, onSuccess }: VentasModalProps) {
                             </div>
                         </div>
                     </div>
-                    <div className="flex gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            disabled={loading}
-                            className="flex-1 px-6 py-3 border-2 border-border rounded-lg hover:bg-accent transition-all hover:scale-105 font-semibold text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={loading || carrito.length === 0}
-                            className="flex-1 bg-gradient-to-r from-[#5e2129] to-[#8b7355] text-white px-6 py-3 rounded-lg hover:from-[#7d2b35] hover:to-[#9d8565] transition-all hover:scale-105 font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {loading ? (
-                                <span className="flex items-center justify-center gap-2">
-                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                    Procesando...
-                                </span>
-                            ) : (
-                                "Finalizar venta"
-                            )}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                <div className="flex gap-3 pt-4">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={onClose}
+                        disabled={loading}
+                        className="flex-1"
+                    >
+                        Cancelar
+                    </Button>
+                    <Button
+                        type="submit"
+                        disabled={loading || carrito.length === 0}
+                        className="flex-1 bg-gradient-to-r from-[#5e2129] to-[#8b7355] text-white px-6 py-3 rounded-lg hover:from-[#7d2b35] hover:to-[#9d8565] transition-all hover:scale-105 font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {loading ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                Procesando...
+                            </span>
+                        ) : (
+                            "Finalizar venta"
+                        )}
+                    </Button>
+                </div>
+            </form>
+        </BaseModal>
     )
 }

@@ -1,180 +1,164 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { X, Warehouse, Droplet, Calendar, DollarSign } from "lucide-react"
+import { Warehouse } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import type { Barrica } from "@/types/masters"
 import { createBarrica, updateBarrica } from "@/services/MastersService"
+import { BaseModal } from "@/components/ui/base-modal"
+import { ErrorAlert } from "@/components/ui/error-alert"
+import { useModalForm } from "@/hooks/useModalForm"
 
 type BarricaModalProps = {
     open: boolean
     onClose: () => void
-    barrica?: any
+    barrica?: Barrica | null
     onSuccess: () => void
 }
 
 export default function BarricaModal({ open, onClose, barrica, onSuccess }: BarricaModalProps) {
-    const [formData, setFormData] = useState({
-        tipo_madera: barrica?.tipo_madera || "",
-        capacidad_litros: barrica?.capacidad_litros?.toString() || "",
-        fecha_compra: barrica?.fecha_compra || "",
-        costo: barrica?.costo?.toString() || "",
+    const { formData, setFormData, error, setError, loading, handleSubmit } = useModalForm<any>({
+        isOpen: open,
+        initialData: barrica ?? null,
+        createFn: (data: any) => {
+            const payload = {
+                tipo_madera: (data as any).tipo_madera || "",
+                capacidad_litros: Number.parseFloat((data as any).capacidad_litros) || 0,
+                fecha_compra: (data as any).fecha_compra || "",
+                costo: Number.parseFloat((data as any).costo) || 0,
+            }
+            return createBarrica(payload)
+        },
+        updateFn: (id: any, data: any) => {
+            const payload = {
+                tipo_madera: (data as any).tipo_madera || "",
+                capacidad_litros: Number.parseFloat((data as any).capacidad_litros) || 0,
+                fecha_compra: (data as any).fecha_compra || "",
+                costo: Number.parseFloat((data as any).costo) || 0,
+            }
+            return updateBarrica(id, payload)
+        },
+        getId: (d: any) => (d as any)?.id_barrica ?? (d as any)?.id,
+        onSuccess,
     })
-    const [error, setError] = useState("")
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setError("")
-
-        if (!formData.tipo_madera || !formData.capacidad_litros || !formData.fecha_compra || !formData.costo) {
-            setError("Por favor, complete todos los campos obligatorios.")
-            return
-        }
-
-        const dataToSend = {
-            tipo_madera: formData.tipo_madera,
-            capacidad_litros: Number.parseFloat(formData.capacidad_litros),
-            fecha_compra: formData.fecha_compra,
-            costo: Number.parseFloat(formData.costo),
-        }
-
-        const isUpdate = barrica !== null && barrica.id_barrica
-
-        const serviceCall = isUpdate ? updateBarrica(barrica.id_barrica, dataToSend) : createBarrica(dataToSend)
-
-        const result = await serviceCall
-
-        if (result && result.success) {
-            onSuccess()
-            onClose()
-        } else {
-            setError(result?.errorMessage || "Ocurrió un error desconocido.")
-        }
-    }
 
     if (!open) return null
 
+    const local = {
+        tipo_madera: (formData as any)?.tipo_madera ?? "",
+        capacidad_litros: (formData as any)?.capacidad_litros?.toString?.() ?? "",
+        fecha_compra: (formData as any)?.fecha_compra ?? "",
+        costo: (formData as any)?.costo?.toString?.() ?? "",
+    }
+
+    const onSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError("")
+
+        const validate = () => {
+            if (!local.tipo_madera || !local.capacidad_litros || !local.fecha_compra || !local.costo) {
+                setError("Por favor, complete todos los campos obligatorios.")
+                return false
+            }
+            return true
+        }
+
+        const result = await handleSubmit(() => validate())
+        if (result && (result as any).success) {
+            onClose()
+        }
+    }
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-card rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 text-white p-6 rounded-t-2xl">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-                                <Warehouse className="h-6 w-6 text-white" />
-                            </div>
-                            <h2 className="text-2xl font-bold">{barrica ? "Editar Barrica" : "Nueva Barrica"}</h2>
-                        </div>
-                        <button
-                            onClick={onClose}
-                            className="bg-white/20 p-2 rounded-lg hover:bg-white/30 transition-all hover:scale-110"
-                        >
-                            <X className="h-5 w-5 text-white" />
-                        </button>
-                    </div>
+        <BaseModal
+            isOpen={open}
+            onClose={onClose}
+            title={barrica ? "Editar Barrica" : "Nueva Barrica"}
+            icon={<Warehouse className="h-6 w-6 text-white" />}
+            gradientColors="from-amber-600 via-orange-600 to-red-600"
+            maxWidth="max-w-2xl"
+        >
+            <form onSubmit={onSubmit} className="space-y-6">
+                <ErrorAlert message={error} />
+
+                <div>
+                    <label className="block text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
+                        <Warehouse className="w-4 h-4 text-amber-600" />
+                        Tipo de Madera *
+                    </label>
+                    <Select
+                        value={local.tipo_madera}
+                        onValueChange={(value) => setFormData({ ...(formData ?? {}), tipo_madera: value })}
+                    >
+                        <SelectTrigger className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-foreground">
+                            <SelectValue placeholder="Selecciona el tipo de madera" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="Frances">Francés</SelectItem>
+                            <SelectItem value="Americano">Americano</SelectItem>
+                            <SelectItem value="Mixto">Mixto</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                    {error && (
-                        <div className="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg flex items-center gap-2">
-                            <span className="font-semibold">Error:</span>
-                            <span>{error}</span>
-                        </div>
-                    )}
+                <div>
+                    <label className="block text-sm font-semibold mb-2 text-foreground">Capacidad (litros) *</label>
+                    <input
+                        type="number"
+                        required
+                        step="0.01"
+                        min="0"
+                        value={local.capacidad_litros}
+                        onChange={(e) => setFormData({ ...(formData ?? {}), capacidad_litros: e.target.value })}
+                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-foreground"
+                        placeholder="Ej: 225"
+                    />
+                </div>
 
-                    <div>
-                        <label className="block text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
-                            <Warehouse className="w-4 h-4 text-amber-600" />
-                            Tipo de Madera *
-                        </label>
-                        <Select
-                            value={formData.tipo_madera}
-                            onValueChange={(value) => setFormData({ ...formData, tipo_madera: value })}
-                        >
-                            <SelectTrigger className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-foreground">
-                                <SelectValue placeholder="Selecciona el tipo de madera" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Frances">Francés</SelectItem>
-                                <SelectItem value="Americano">Americano</SelectItem>
-                                <SelectItem value="Mixto">Mixto</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                <div>
+                    <label className="block text-sm font-semibold mb-2 text-foreground">Fecha de compra *</label>
+                    <input
+                        type="date"
+                        required
+                        value={local.fecha_compra}
+                        onChange={(e) => setFormData({ ...(formData ?? {}), fecha_compra: e.target.value })}
+                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-foreground"
+                    />
+                </div>
 
-                    <div>
-                        <label className="block text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
-                            <Droplet className="w-4 h-4 text-amber-600" />
-                            Capacidad (Litros) *
-                        </label>
-                        <Select
-                            value={formData.capacidad_litros}
-                            onValueChange={(value) => setFormData({ ...formData, capacidad_litros: value })}
-                        >
-                            <SelectTrigger className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-foreground">
-                                <SelectValue placeholder="Selecciona la capacidad" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="225">225L (Barrica Bordelesa)</SelectItem>
-                                <SelectItem value="228">228L (Barrica Borgoña)</SelectItem>
-                                <SelectItem value="300">300L</SelectItem>
-                                <SelectItem value="500">500L</SelectItem>
-                                <SelectItem value="600">600L</SelectItem>
-                                <SelectItem value="1000">1000L</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                <div>
+                    <label className="block text-sm font-semibold mb-2 text-foreground">Costo *</label>
+                    <input
+                        type="number"
+                        required
+                        step="0.01"
+                        min="0"
+                        value={local.costo}
+                        onChange={(e) => setFormData({ ...(formData ?? {}), costo: e.target.value })}
+                        className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-foreground"
+                        placeholder="Ej: 850.00"
+                    />
+                </div>
 
-                    <div>
-                        <label className="block text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-amber-600" />
-                            Fecha de Compra *
-                        </label>
-                        <input
-                            type="date"
-                            required
-                            value={formData.fecha_compra}
-                            onChange={(e) => setFormData({ ...formData, fecha_compra: e.target.value })}
-                            className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-foreground"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
-                            <DollarSign className="w-4 h-4 text-amber-600" />
-                            Costo *
-                        </label>
-                        <input
-                            type="number"
-                            required
-                            step="0.01"
-                            min="0"
-                            value={formData.costo}
-                            onChange={(e) => setFormData({ ...formData, costo: e.target.value })}
-                            className="w-full px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all text-foreground"
-                            placeholder="Ej: 850.00"
-                        />
-                    </div>
-
-                    <div className="flex gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="flex-1 px-6 py-3 border-2 border-border rounded-lg hover:bg-accent transition-all hover:scale-105 font-semibold text-foreground"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            className="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 text-white px-6 py-3 rounded-lg hover:from-amber-700 hover:to-orange-700 transition-all hover:scale-105 font-semibold shadow-lg"
-                        >
-                            {barrica ? "Actualizar" : "Crear"} Barrica
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                <div className="flex gap-4">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={onClose}
+                        className="flex-1"
+                    >
+                        Cancelar
+                    </Button>
+                    <Button
+                        type="submit"
+                        disabled={loading}
+                        className="flex-1 bg-gradient-to-r from-amber-600 to-orange-600 text-white px-6 py-3 rounded-lg hover:from-amber-700 hover:to-orange-700 transition-all hover:scale-105 font-semibold shadow-lg"
+                    >
+                        {barrica ? "Actualizar" : "Crear"} Barrica
+                    </Button>
+                </div>
+            </form>
+        </BaseModal>
     )
 }

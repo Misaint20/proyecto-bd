@@ -3,8 +3,12 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { X, Droplets, Wine, Percent } from "lucide-react"
+import { BaseModal } from "@/components/ui/base-modal"
+import { ErrorAlert } from "@/components/ui/error-alert"
+import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createMezclaVino, updateMezclaVino, getVarietales } from "@/services/MastersService"
+import type { MezclaVino } from "@/types/masters"
 import { getVinos } from "@/services/VinosService"
 import { fetchData } from "@/lib/fetchData"
 import type { Vino } from "@/types/vino"
@@ -13,15 +17,15 @@ import type { Varietal } from "@/types/masters"
 type MezclaVinoModalProps = {
     open: boolean
     onClose: () => void
-    mezcla?: any
+    mezcla?: MezclaVino | null
     onSuccess: () => void
 }
 
 export default function MezclaVinoModal({ open, onClose, mezcla, onSuccess }: MezclaVinoModalProps) {
     const [formData, setFormData] = useState({
-        vino: mezcla?.vino || "",
-        varietal: mezcla?.varietal || "",
-        porcentaje: mezcla?.porcentaje?.toString() || "",
+        vino: (mezcla as any)?.id_vino ?? (mezcla as MezclaVino)?.Vino?.id_vino ?? "",
+        varietal: (mezcla as any)?.id_varietal ?? (mezcla as MezclaVino)?.Varietal?.id_varietal ?? "",
+        porcentaje: ((mezcla as any)?.porcentaje ?? (mezcla as MezclaVino)?.porcentaje)?.toString() || "",
     })
     const [error, setError] = useState("")
     const [vinos, setVinos] = useState<Vino[]>([])
@@ -47,9 +51,10 @@ export default function MezclaVinoModal({ open, onClose, mezcla, onSuccess }: Me
             porcentaje: Number.parseFloat(formData.porcentaje),
         }
 
-        const isUpdate = mezcla !== null && mezcla.id_mezcla
+        const mezclaId = (mezcla as any)?.id_mezcla ?? (mezcla as MezclaVino)?.id_mezcla
+        const isUpdate = !!mezclaId
 
-        const serviceCall = isUpdate ? updateMezclaVino(mezcla.id_mezcla, dataToSend) : createMezclaVino(dataToSend)
+        const serviceCall = isUpdate ? updateMezclaVino(mezclaId as string, dataToSend) : createMezclaVino(dataToSend)
 
         const result = await serviceCall
 
@@ -64,34 +69,16 @@ export default function MezclaVinoModal({ open, onClose, mezcla, onSuccess }: Me
     if (!open) return null
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-card rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white p-6 rounded-t-2xl">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-                                <Droplets className="h-6 w-6 text-white" />
-                            </div>
-                            <h2 className="text-2xl font-bold">{mezcla ? "Editar Mezcla de Vino" : "Nueva Mezcla"}</h2>
-                        </div>
-                        <button
-                            onClick={onClose}
-                            className="bg-white/20 p-2 rounded-lg hover:bg-white/30 transition-all hover:scale-110"
-                        >
-                            <X className="h-5 w-5 text-white" />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                    {error && (
-                        <div className="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg flex items-center gap-2">
-                            <span className="font-semibold">Error:</span>
-                            <span>{error}</span>
-                        </div>
-                    )}
+        <BaseModal
+            isOpen={open}
+            onClose={onClose}
+            title={mezcla ? "Editar Mezcla de Vino" : "Nueva Mezcla"}
+            icon={<Droplets className="h-6 w-6 text-white" />}
+            gradientColors="from-purple-600 via-pink-600 to-rose-600"
+            maxWidth="max-w-2xl"
+        >
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <ErrorAlert message={error} />
 
                     <div>
                         <label className="block text-sm font-semibold mb-2 text-foreground flex items-center gap-2">
@@ -168,23 +155,15 @@ export default function MezclaVinoModal({ open, onClose, mezcla, onSuccess }: Me
                         </Select>
                     </div>
 
-                    <div className="flex gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="flex-1 px-6 py-3 border-2 border-border rounded-lg hover:bg-accent transition-all hover:scale-105 font-semibold text-foreground"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:scale-105 font-semibold shadow-lg"
-                        >
-                            {mezcla ? "Actualizar" : "Crear"} Mezcla
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                <div className="flex gap-3 pt-4">
+                    <Button type="button" variant="outline" onClick={onClose} className="flex-1 border-2 bg-transparent">
+                        Cancelar
+                    </Button>
+                    <Button type="submit" className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all hover:scale-105 font-semibold shadow-lg">
+                        {mezcla ? "Actualizar" : "Crear"} Mezcla
+                    </Button>
+                </div>
+            </form>
+        </BaseModal>
     )
 }

@@ -11,7 +11,7 @@ export const PATCH = async (req: NextRequest, { params }: Context) => {
     try {
         const body = await req.json();
         const { id } = await params;
-        const response = await fetch(`${BACKEND_URL}/api/users/${id}`, {
+        const response = await fetch(`${BACKEND_URL}/api/usuarios/${id}`, {
             method: 'PATCH',
             headers: await getAuthHeaders(req),
             body: JSON.stringify(body)
@@ -32,7 +32,7 @@ export const PATCH = async (req: NextRequest, { params }: Context) => {
 export const DELETE = async (req: NextRequest, { params }: Context) => {
     try {
         const { id } = await params;
-        const response = await fetch(`${BACKEND_URL}/api/users/${id}`, {
+        const response = await fetch(`${BACKEND_URL}/api/usuarios/${id}`, {
             method: 'DELETE',
             headers: await getAuthHeaders(req)
         });
